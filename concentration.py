@@ -112,11 +112,12 @@ def difuze(d, con, mass):
     tau = l/Di
     return 1/tau  
 
-def rate_ambi_dif(mass):     
+def rate_langevin(mass):
     reduced_mass = mass * ram_He * AMU / (mass + ram_He)
     alpha = 0.228044e-40  # C2m2 J-1 polarizability
-    rate = Q0 / (2*epsilon_0) * (alpha / reduced_mass)**0.5
-    return rate * 1e6
+    # Langevin rate coeff.
+    rate = elementary_charge / (2*epsilon_0) * (alpha / reduced_mass)**0.5
+    return rate * 1e6 # cm^3 s^-1
     
 def ambi_dif(rate, con, mass, Te):
     nu = rate * con #* c2
@@ -134,8 +135,8 @@ def Q_elastic(Te, nn, Mn, Me, rate):
     tau_cool = tau * Mn * AMU/(2*Me)
     return 1.5  * k_b * (Tn - Te) / tau_cool 
 
-def actual_rate(k_c, soubor):
-    reaction = file(soubor,"r")
+def actual_rate(k_c, file_reaction_coeffs):
+    reaction = file(file_reaction_coeffs,"r")
     index = 0
     for line in reaction:             
             rovnice = line.split()
@@ -197,35 +198,28 @@ def calculate_E_loss(Te, f, concentration, k_c, pomoc, speci, Eloss, Elastic):
     return E_loss
 
 
-def create_ODE(t, concentration, k_c, Z, REACT, pomoc, ambi_rate, speci, Eloss, maxwell,Elastic):
+def create_ODE(t, concentration, k_c, Z, REACT, pomoc, speci, Eloss, maxwell,Elastic):
     # sestaveni rovnice pro resic lsoda; nevyzaduje vypocet jakobianu 
 
-    global Te_old   
-    global Te_old2
+    global Te_last_coeffs
+    global Te_last #2
 
     if (maxwell == True): 
-        Te =concentration[-1] * Q0 / k_b
-        a = concentration[-1]
+        TeK =concentration[-1] * Q0 / k_b
+        Te = concentration[-1]
 
-        if (a != Te_old2):
-            #b = a/Te_old
-            #if ((b < 0.9) or (b > 1.1)):                
-                RC.read_file(soubor_reakce, soubor_rozdel, Te, maxwell)
-                k_c = actual_rate(k_c, file_reactions)
-                Te_old = a
-                #Te_old2 = concentration[-1]
+        if (Te != Te_last):
+                RC.read_file(file_reaction_data, file_Edist, file_reaction_coeffs, TeK, maxwell)
+                k_c = actual_rate(k_c, file_reaction_coeffs)
+                Te_last_coeffs = Te
 
-    global jedna
-    if (jedna == 0):
-        if (concentration[-1] <= 0.00664): 
-            print t
-            jedna = jedna + 1
+
 
     for i in range(len(dif_in)):
         k_c[dif_in[i][0]] = difuze(difu, concentration[pomoc["He"]], dif_in[i][1])
         
     for i in range(len(ambi_di)):
-        k_c[ambi_di[i][0]] = ambi_dif(rate_ambi_dif(speci[i].mass) , concentration[pomoc["He"]], ambi_di[i][1], concentration[len(concentration)-1] * Q0 / k_b)
+        k_c[ambi_di[i][0]] = ambi_dif(rate_langevin(speci[i].mass) , concentration[pomoc["He"]], ambi_di[i][1], concentration[len(concentration)-1] * Q0 / k_b)
 
     if len(St) > 0:
         rate_st = Stevefelt_formula(concentration[pomoc["e-"]], concentration[len(concentration)-1] * Q0 / k_b)
@@ -239,12 +233,8 @@ def create_ODE(t, concentration, k_c, Z, REACT, pomoc, ambi_rate, speci, Eloss, 
     f = REACT * f
     f = N.exp(f)
     f = N.multiply(f,k_c)
-    global vypis
-    global ind_vyvoj
-    global opak    
     E_loss = 0
     if (maxwell == True):
-        
         E_loss = calculate_E_loss(Te, f, concentration, k_c, pomoc, speci, Eloss, Elastic)
     global vibr_T
 
@@ -253,31 +243,26 @@ def create_ODE(t, concentration, k_c, Z, REACT, pomoc, ambi_rate, speci, Eloss, 
 
     if N.any(concentration < 0): print concentration     
 
-    Te_old2 = concentration[-1]
+    Te_last = concentration[-1]
     return f
    
     
-def solve_ODE(t1, dt, pomoc, speci,  soubor_reakce, soubor_rozdel, Te, maxwell):
+def solve_ODE(t1, dt, file_species, file_reaction_data, file_Edist, file_reaction_coeffs, Te, maxwell):
+
+    speci, pomoc = species(file_species)
     
-    RC.read_file(soubor_reakce, soubor_rozdel, Te, maxwell)    
-    k_c, REACT, Z, Eloss, Elastic = reactions(file_reactions, pomoc, speci)
+    # integrate the reaction rate coeffs and save
+    RC.read_file(file_reaction_data, file_Edist, file_reaction_coeffs, Te, maxwell)
+
+    # load the saved reaction rate coeffs
+    k_c, REACT, Z, Eloss, Elastic = reactions(file_reaction_coeffs, pomoc, speci)
 
     t0 = 0
-    global at_mass
-    at_mass = N.array(at_mass)
-    ambi_rate = rate_ambi_dif(at_mass)   
-    y0 = []
-    for i in range(len(speci)):
-        y0.append(speci[i].conc)
-
-    y0 = N.array(y0)
-    y0 = N.append(y0, [TeV])
+    y0 = N.array([s.conc for s in speci] + [Te * k_b / Q0])
 
     vyvoj = [y0]
     cas = [0]   
-    global vypis
     global conc_srov
-    global ind_vyvoj
     global Te_old
     global Te_old2
     Te_old = y0[-1]
@@ -285,23 +270,21 @@ def solve_ODE(t1, dt, pomoc, speci,  soubor_reakce, soubor_rozdel, Te, maxwell):
     r = ode(create_ODE).set_integrator('lsoda')
     stopni = 0
 
-    r.set_initial_value(y0, t0).set_f_params(k_c, Z, REACT, pomoc, ambi_rate, speci, Eloss, maxwell,Elastic)
+    Te_old2 = 1.
+    create_ODE(1.27e-22, y0, k_c, Z, REACT, pomoc, speci, Eloss, maxwell,Elastic)
+    r.set_initial_value(y0, t0).set_f_params(k_c, Z, REACT, pomoc, speci, Eloss, maxwell,Elastic)
     while r.successful() and r.t < t1:
         try:
             r.integrate(r.t+dt)
-            if (r.t > 1e-4):
-                for i in range(len(speci)):
-                    if (N.abs((conc_srov[i] / r.y[i] - r.y[i]/r.y[i])) < 1e-5): stopni += 1
             cas.append(r.t)
             vyvoj.append(r.y)
             for i in range(len(r.y)-1):        
                 if (r.y[i] <= 1e-10): r.y[i] = 0
-            ind_vyvoj += 20e-2
             
-            if stopni == len (speci): 
-                print "zastaveno v case ", r.t
-                break
-            stopni = 0
+            if (r.t > 1e-4):
+                if N.all(N.abs((conc_srov / r.y - 1)) < 1e-5):
+                    print "zastaveno v case ", r.t
+                    break
             conc_srov = r.y
         except: 
             print "stop"
@@ -317,64 +300,70 @@ def solve_ODE(t1, dt, pomoc, speci,  soubor_reakce, soubor_rozdel, Te, maxwell):
 
     return r, cas, vyvoj, speci, Te
 
-
-soubor_reakce = "data/collisions/electron.txt"  # reakce + data pro CS, k_rate
-#soubor_rozdel = "data/collisions/eedf_He_H2_14Td_300K.txt"
-#soubor_rozdel = "data/collisions/eedf_He_H2_14Td_77K.txt"
-soubor_rozdel = "data/collisions/elendif/eedf_He_H2_14Td_100_1000.txt" #rozdelovaci funkce
-
+##############################
+##### global variables #######
+##############################
 Te_old = 1.73
 Te_old2 = 1.73
 St = []   
-at_mass = []
 ambi_di = [] 
 dif_in = []
+conc_srov = 0
 
-difu = 1.26076522957e-12
-k_b = 1.38e-23
-Tn = 77
-Te = 20000
-m_H = 1.00794 * 1.667e-27
-AMU = 1.667e-27
-Q0 = 1.602189e-19
-TeV = Te * k_b / Q0
-file_species = "data/species.txt"       # vstupni koncentrace a parametry castic
-file_reactions = "data/collisions/reaction.txt" # vygenerovane reakce + k_rate
-
-time = 20e-3
-time_step = time/10e2
-vypis = 0#.1 * int(time / time_step)
-ind_vyvoj = 0
-opak = ind_vyvoj
-
-speci, pomoc = species(file_species)
-jedna = 0 
-conc_srov = N.zeros(len(speci))
-
+##############################
+##### physical constants #####
+##############################
+from scipy.constants import Boltzmann, elementary_charge, epsilon_0, physical_constants
+Q0 = elementary_charge
+k_b = Boltzmann
+AMU = physical_constants["atomic mass constant"][0]
 DE_CRR = 0.13#*1.6e-19
 CRR_factor = 3.8e-9
 
+# Helium atomic mass
+ram_He = 4.0026
+
+# neutral elastic collision rate coeff
+difu = 1.26076522957e-12
+
+##############################
+###### input files ###########
+##############################
+#soubor_rozdel = "data/collisions/eedf_He_H2_14Td_300K.txt"
+#soubor_rozdel = "data/collisions/eedf_He_H2_14Td_77K.txt"
+file_Edist = "data/collisions/elendif/eedf_He_H2_14Td_100_1000.txt" #rozdelovaci funkce
+file_species = "data/species.txt"       # vstupni koncentrace a parametry castic
+file_reaction_coeffs = "data/collisions/reaction.txt" # vygenerovane reakce + k_rate
+file_reaction_data = "data/collisions/electron.txt"  # reakce + data pro CS, k_rate
+
+Tn = 77
+Te = 20000
+
+time = 20e-3
+time_step = time/10e2
+
+
 r = 7.5e-3
 l = (r/2.405)**2
-ram_He = 4.0026
-permitivita = 8.854187817620e-12 
-
-Te = 22700
 
 
-
-
-concentrations, cas, vyvoj, speci, Te = solve_ODE(time, time_step, pomoc, speci, soubor_reakce, soubor_rozdel, Te, False)
-TeV = Te * k_b / Q0
+concentrations, cas, vyvoj, speci, Te = solve_ODE(time, time_step, file_species, file_reaction_data, file_Edist, file_reaction_coeffs, Te, False)
 
 for i in range(len(speci)):
     print speci[i].name, ": \t %e" % speci[i].conc
 
-
+import matplotlib.pyplot as plt
+f, ax = plt.subplots()
+print(vyvoj)
+for i in range(len(speci)):
+    ax.plot(cas, vyvoj[:,i], label=speci[i].name)
+    ax.set_yscale("log")
+plt.savefig("result.pdf")
+exit(0)
 print Te
 time_step = time_step /1e3
-#time = time * 1e1
-concentrations, cas, vyvoj, speci, Te = solve_ODE(time, time_step, pomoc, speci, soubor_reakce, soubor_rozdel, Te, True)
+time = time/200
+concentrations, cas, vyvoj, speci, Te = solve_ODE(time, time_step, file_species, file_reaction_data, file_Edist, file_reaction_coeffs, Te, True)
 
 for i in range(len(speci)):
     print speci[i].name, ": \t %e" % speci[i].conc
