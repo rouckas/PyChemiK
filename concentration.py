@@ -168,7 +168,34 @@ def Q_ei_coulombic(Te, n, nn, mass):
     return 1.5*k_b*nu_ei_cool_NRL*(Tn - Te)/Q0
     
     
-    
+def calculate_E_loss(Te, f, concentration, k_c, pomoc, speci, Eloss, Elastic):
+    Eloss_Ela = []
+    for i in range(len(Elastic)):
+        Eloss_Ela.append(Q_elastic(Te, concentration[Elastic[i][1]], speci[Elastic[i][1]].mass, speci[pomoc["e-"]].mass, k_c[Elastic[i][0]])  )
+
+    Eloss_Ela = N.array(Eloss_Ela)
+    Eloss_Ela = sum(Eloss_Ela)
+
+
+    E_loss = N.dot(f, Eloss) / concentration[pomoc["e-"]]
+
+    Eloss_Ela = Eloss_Ela/Q0
+
+    coulombic =\
+            Q_ei_coulombic(Te, concentration[pomoc["e-"]],concentration[pomoc["H3+"]], speci[pomoc["H3+"]].mass)\
+            + Q_ei_coulombic(Te, concentration[pomoc["e-"]],concentration[pomoc["H+"]], speci[pomoc["H+"]].mass)\
+            + Q_ei_coulombic(Te, concentration[pomoc["e-"]],concentration[pomoc["H2+"]],speci[pomoc["H2+"]].mass)\
+            + Q_ei_coulombic(Te, concentration[pomoc["e-"]],concentration[pomoc["He+"]], speci[pomoc["He+"]].mass)\
+            + Q_ei_coulombic(Te, concentration[pomoc["e-"]],concentration[pomoc["He2+"]], speci[pomoc["He2+"]].mass)\
+            + Q_ei_coulombic(Te, concentration[pomoc["e-"]],concentration[pomoc["Ar+"]], speci[pomoc["Ar+"]].mass)\
+            + Q_ei_coulombic(Te, concentration[pomoc["e-"]],concentration[pomoc["ArH+"]], speci[pomoc["ArH+"]].mass)\
+            + Q_ei_coulombic(Te, concentration[pomoc["e-"]],concentration[pomoc["HeH+"]], speci[pomoc["HeH+"]].mass)\
+
+    E_loss = E_loss + Eloss_Ela #+ CRR
+
+    E_loss += coulombic
+    return E_loss
+
 
 def create_ODE(t, concentration, k_c, Z, REACT, pomoc, ambi_rate, speci, Eloss, maxwell,Elastic):
     # sestaveni rovnice pro resic lsoda; nevyzaduje vypocet jakobianu 
@@ -218,24 +245,7 @@ def create_ODE(t, concentration, k_c, Z, REACT, pomoc, ambi_rate, speci, Eloss, 
     E_loss = 0
     if (maxwell == True):
         
-        Eloss_Ela = []
-        for i in range(len(Elastic)):
-            Eloss_Ela.append(Q_elastic(Te, concentration[Elastic[i][1]], speci[Elastic[i][1]].mass, speci[pomoc["e-"]].mass, k_c[Elastic[i][0]])  )
-
-        Eloss_Ela = N.array(Eloss_Ela)
-        Eloss_Ela = sum(Eloss_Ela)
-
-
-        E_loss = N.dot(f, Eloss) / concentration[pomoc["e-"]]
-
-        Eloss_Ela = Eloss_Ela/Q0  
-
-        coulombic = Q_ei_coulombic(Te, concentration[pomoc["e-"]],concentration[pomoc["H3+"]] , speci[pomoc["H3+"]].mass)         + Q_ei_coulombic(Te, concentration[pomoc["e-"]],concentration[pomoc["H+"]] , speci[pomoc["H+"]].mass)        +Q_ei_coulombic(Te, concentration[pomoc["e-"]],concentration[pomoc["H2+"]] ,speci[pomoc["H2+"]].mass)          +Q_ei_coulombic(Te, concentration[pomoc["e-"]],concentration[pomoc["He+"]] , speci[pomoc["He+"]].mass)         +Q_ei_coulombic(Te, concentration[pomoc["e-"]],concentration[pomoc["He2+"]] , speci[pomoc["He2+"]].mass)          +Q_ei_coulombic(Te, concentration[pomoc["e-"]],concentration[pomoc["Ar+"]] , speci[pomoc["Ar+"]].mass)         +Q_ei_coulombic(Te, concentration[pomoc["e-"]],concentration[pomoc["ArH+"]] , speci[pomoc["ArH+"]].mass)         +Q_ei_coulombic(Te, concentration[pomoc["e-"]],concentration[pomoc["HeH+"]] , speci[pomoc["HeH+"]].mass)        
-     
-        E_loss = E_loss + Eloss_Ela #+ CRR
-
-        E_loss += coulombic
-
+        E_loss = calculate_E_loss(Te, f, concentration, k_c, pomoc, speci, Eloss, Elastic)
     global vibr_T
 
     f = Z * f 
