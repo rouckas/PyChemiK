@@ -227,7 +227,6 @@ def create_ODE(t, concentration, k_c, Z, REACT, pomoc, ambi_rate, speci, Eloss, 
 
 
         E_loss = N.dot(f, Eloss) / concentration[pomoc["e-"]]
-        E_loss = sum(E_loss)
 
         Eloss_Ela = Eloss_Ela/Q0  
 
