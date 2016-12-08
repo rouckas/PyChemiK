@@ -1,0 +1,25 @@
+1.63617557537e-08	e-	H2	=>	e-	H2	// Phelps, typ reakce = elastic
+9.21222540942e-09	e-	He	=>	e-	He	// Phelps, typ reakce = elastic
+1.72111508204e-09	e-	Ar	=>	e-	Ar	// Phelps; typ reakce = elastic
+2.35475318219e-109	e-	H	=>	e-	e-	H+	// hydhel
+4.97387854105e-17	e-	H2	=>	e-	H2(v=1)	// hydhel; inverse=True, ENERGY LOSS = -0.516
+8.92777120798e-13	e-	H2(v=1)	=>	e-	H2	// dopocteno,  hydhel; inverse=True, ENERGY LOSS =  0.516
+1.01586259631e-19	e-	H2	=>	e-	H2(v=2)	// hydhel; inverse=True, vibration_cooling, ENERGY LOSS = -1.032
+3.27288482495e-11	e-	H2(v=2)	=>	e-	H2	// dopocteno,  hydhel; inverse=True, vibration_cooling, ENERGY LOSS =  1.032
+5.29154722659e-24	e-	H2	=>	e-	H2(v=3)	// hydhel; inverse=True, vibration_cooling, ENERGY LOSS = -1.564
+3.06003437467e-11	e-	H2(v=3)	=>	e-	H2	// dopocteno,  hydhel; inverse=True, vibration_cooling, ENERGY LOSS =  1.564
+1.54730438141e-16	e-	H2(v=1)	=>	e-	H2(v=2)	// hydhel_vibr, funkce pro rate, vibration_cooling, ENERGY LOSS = -0.516
+3.67796095547e-13	e-	H2(v=2)	=>	e-	H2(v=1)	// hydhel_vibr, funkce pro rate, ENERGY LOSS = 0.516
+2.3293936022e-16	e-	H2(v=2)	=>	e-	H2(v=3)	// hydhel_vibr, funkce pro rate, ENERGY LOSS = -0.516
+3.39381478832e-13	e-	H2(v=3)	=>	e-	H2(v=2)	// hydhel_vibr, funkce pro rate, ENERGY LOSS = 0.516
+4.81251659054e-125	e-	H2 	=>	e-	H2+	e-		// hydhel
+1.50592988287e-80	e-	H2	=>	e-	H	H	// hydhel
+1.24951068659e-142	e-	H2	=>	e-	H+	H	e-	// hydhel
+1.20517463083e-27	e-	H2+	=>	e-	H+	H		// hydhel
+2.92519902423e-125	e-	H2+	=>	e-	H+	H+	e-	// hydhel
+7.84909364879e-08	e-	H3+	=>	H	H	H		// hydhel 
+1.77879647013e-109	e-	H3+	=>	e-	H+	H	H	// hydhel
+1.43334903312e-11	e-	H-	=>	e-	H	e-		// hydhel
+9.15459574596e-111	e-	H-	=>	e-	H+	e-	e-	// hydhel
+2.29376724854e-184	e-	He	=>	e-	He+	e-		// hydhel
+1.77369265844e-161	e-	He	=>	e-	He(1s2s)		// hydhel
