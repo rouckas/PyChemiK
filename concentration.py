@@ -113,9 +113,9 @@ def difuze(d, con, mass):
     return 1/tau  
 
 def rate_ambi_dif(mass):     
-    r_mass = mass * ram_He * AMU / (mass + ram_He)
-    alpha = 0.228044e-40  # C2m2 J-1
-    rate = (Q0 / (2*permitivita)) * (N.sqrt(alpha / r_mass)**0.5)
+    reduced_mass = mass * ram_He * AMU / (mass + ram_He)
+    alpha = 0.228044e-40  # C2m2 J-1 polarizability
+    rate = Q0 / (2*epsilon_0) * (alpha / reduced_mass)**0.5
     return rate * 1e6
     
 def ambi_dif(rate, con, mass, Te):
