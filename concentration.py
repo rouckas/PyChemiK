@@ -219,7 +219,7 @@ def create_ODE(t, concentration, k_c, Z, REACT, pomoc, speci, Eloss, maxwell,Ela
         k_c[dif_in[i][0]] = difuze(difu, concentration[pomoc["He"]], dif_in[i][1])
         
     for i in range(len(ambi_di)):
-        k_c[ambi_di[i][0]] = ambi_dif(rate_langevin(speci[i].mass) , concentration[pomoc["He"]], ambi_di[i][1], concentration[len(concentration)-1] * Q0 / k_b)
+        k_c[ambi_di[i][0]] = ambi_dif(rate_langevin(ambi_di[i][1]) , concentration[pomoc["He"]], ambi_di[i][1], concentration[len(concentration)-1] * Q0 / k_b)
 
     if len(St) > 0:
         rate_st = Stevefelt_formula(concentration[pomoc["e-"]], concentration[len(concentration)-1] * Q0 / k_b)
