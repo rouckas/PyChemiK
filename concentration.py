@@ -204,44 +204,41 @@ def create_ODE(t, concentration, k_c, Z, REACT, pomoc, speci, Eloss, maxwell,Ela
     global Te_last_coeffs
     global Te_last #2
 
-    if (maxwell == True): 
+    if maxwell:
         TeK =concentration[-1] * Q0 / k_b
         Te = concentration[-1]
 
-        if (Te != Te_last):
+        if (Te != Te_last_coeffs):
                 RC.read_file(file_reaction_data, file_Edist, file_reaction_coeffs, TeK, maxwell)
                 k_c = actual_rate(k_c, file_reaction_coeffs)
                 Te_last_coeffs = Te
 
 
 
-    for i in range(len(dif_in)):
-        k_c[dif_in[i][0]] = difuze(difu, concentration[pomoc["He"]], dif_in[i][1])
+    for d in dif_in:
+        k_c[d[0]] = difuze(difu, concentration[pomoc["He"]], d[1])
         
-    for i in range(len(ambi_di)):
-        k_c[ambi_di[i][0]] = ambi_dif(rate_langevin(ambi_di[i][1]) , concentration[pomoc["He"]], ambi_di[i][1], concentration[len(concentration)-1] * Q0 / k_b)
+    for a in ambi_di:
+        k_c[a[0]] = ambi_dif(rate_langevin(a[1]) , concentration[pomoc["He"]], a[1], concentration[-1] * Q0 / k_b)
 
-    if len(St) > 0:
-        rate_st = Stevefelt_formula(concentration[pomoc["e-"]], concentration[len(concentration)-1] * Q0 / k_b)
-        for i in range(len(St)):
-            k_c[St[i]] = rate_st
+    rate_st = Stevefelt_formula(concentration[pomoc["e-"]], concentration[-1] * Q0 / k_b)
+    for S in St:
+        k_c[S] = rate_st
 
 
     concentration[concentration < 1e-12] = 0
-    f = concentration[:len(concentration)-1]
+    f = concentration[:-1]
     f = N.log(f)
     f = REACT * f
     f = N.exp(f)
     f = N.multiply(f,k_c)
     E_loss = 0
-    if (maxwell == True):
+    if maxwell:
         E_loss = calculate_E_loss(Te, f, concentration, k_c, pomoc, speci, Eloss, Elastic)
     global vibr_T
 
     f = Z * f 
     f = N.hstack((f, E_loss))
-
-    if N.any(concentration < 0): print concentration     
 
     Te_last = concentration[-1]
     return f
