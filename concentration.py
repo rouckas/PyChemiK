@@ -205,6 +205,7 @@ def create_ODE(t, concentration, k_c, Z, REACT, pomoc, speci, Eloss, maxwell,Ela
     global Te_last #2
 
     if maxwell:
+        # recalculate coefficients if needed
         TeK =concentration[-1] * Q0 / k_b
         Te = concentration[-1]
 
@@ -213,14 +214,11 @@ def create_ODE(t, concentration, k_c, Z, REACT, pomoc, speci, Eloss, maxwell,Ela
                 k_c = actual_rate(k_c, file_reaction_coeffs)
                 Te_last_coeffs = Te
 
-
-
+    # calculate effective rate coefficients (dependent on concentrations)
     for d in dif_in:
         k_c[d[0]] = difuze(difu, concentration[pomoc["He"]], d[1])
-        
     for a in ambi_di:
         k_c[a[0]] = ambi_dif(rate_langevin(a[1]) , concentration[pomoc["He"]], a[1], concentration[-1] * Q0 / k_b)
-
     rate_st = Stevefelt_formula(concentration[pomoc["e-"]], concentration[-1] * Q0 / k_b)
     for S in St:
         k_c[S] = rate_st
@@ -259,14 +257,13 @@ def solve_ODE(t1, dt, file_species, file_reaction_data, file_Edist, file_reactio
     vyvoj = [y0]
     cas = [0]   
     global conc_srov
-    global Te_old
-    global Te_old2
-    Te_old = y0[-1]
-    Te_old2 = Te_old
+    global Te_last_coeffs
+    global Te_last
+    Te_last_coeffs = y0[-1]
+    Te_last = y0[-1]
     r = ode(create_ODE).set_integrator('lsoda')
     stopni = 0
 
-    Te_old2 = 1.
     create_ODE(1.27e-22, y0, k_c, Z, REACT, pomoc, speci, Eloss, maxwell,Elastic)
     r.set_initial_value(y0, t0).set_f_params(k_c, Z, REACT, pomoc, speci, Eloss, maxwell,Elastic)
     while r.successful() and r.t < t1:
@@ -299,8 +296,8 @@ def solve_ODE(t1, dt, file_species, file_reaction_data, file_Edist, file_reactio
 ##############################
 ##### global variables #######
 ##############################
-Te_old = 1.73
-Te_old2 = 1.73
+Te_last_coeffs = 1.73
+Te_last = 1.73
 St = []   
 ambi_di = [] 
 dif_in = []
@@ -329,8 +326,8 @@ difu = 1.26076522957e-12
 #soubor_rozdel = "data/collisions/eedf_He_H2_14Td_77K.txt"
 file_Edist = "data/collisions/elendif/eedf_He_H2_14Td_100_1000.txt" #rozdelovaci funkce
 file_species = "data/species.txt"       # vstupni koncentrace a parametry castic
-file_reaction_coeffs = "data/collisions/reaction.txt" # vygenerovane reakce + k_rate
 file_reaction_data = "data/collisions/electron.txt"  # reakce + data pro CS, k_rate
+file_reaction_coeffs = "data/collisions/reaction.txt" # vygenerovane reakce + k_rate
 
 Tn = 77
 Te = 20000
@@ -348,14 +345,6 @@ concentrations, cas, vyvoj, speci, Te = solve_ODE(time, time_step, file_species,
 for i in range(len(speci)):
     print speci[i].name, ": \t %e" % speci[i].conc
 
-import matplotlib.pyplot as plt
-f, ax = plt.subplots()
-print(vyvoj)
-for i in range(len(speci)):
-    ax.plot(cas, vyvoj[:,i], label=speci[i].name)
-    ax.set_yscale("log")
-plt.savefig("result.pdf")
-exit(0)
 print Te
 time_step = time_step /1e3
 time = time/200
@@ -363,3 +352,11 @@ concentrations, cas, vyvoj, speci, Te = solve_ODE(time, time_step, file_species,
 
 for i in range(len(speci)):
     print speci[i].name, ": \t %e" % speci[i].conc
+
+import matplotlib.pyplot as plt
+f, ax = plt.subplots()
+print(vyvoj)
+for i in range(len(speci)):
+    ax.plot(cas, vyvoj[:,i], label=speci[i].name)
+    ax.set_yscale("log")
+plt.savefig("result.pdf")
