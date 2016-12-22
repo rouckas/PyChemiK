@@ -226,15 +226,14 @@ def create_ODE(t, concentration, k_c, Z, REACT, pomoc, speci, Eloss, maxwell,Ela
         k_c[S] = rate_st
 
 
+    # calculate the vector of reaction rates
     concentration[concentration < 1e-12] = 0
-    f = concentration[:-1]
-    f = N.log(f)
-    f = REACT * f
-    f = N.exp(f)
-    f = N.multiply(f,k_c)
-    E_loss = 0
+    f = N.exp(REACT * N.log(concentration[:-1])) * k_c
+
     if maxwell:
         E_loss = calculate_E_loss(Te, f, concentration, k_c, pomoc, speci, Eloss, Elastic)
+    else:
+        E_loss = 0
     global vibr_T
 
     f = Z * f 
