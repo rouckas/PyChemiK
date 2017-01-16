@@ -91,10 +91,10 @@ def mxw_E(E,T,M=M_EL):
     return 2*pi*(N.sqrt(1/pi/E_max)**3)*N.sqrt(E)*N.exp(-E/E_max)
 
     
-def read_file(f_CS, f_distr, Te, maxwell = False):
+def read_file(f_CS, f_distr, f_out, Te, maxwell = False):
     file_rozdel = open(f_distr)
     file_prurez = open(f_CS)
-    file_reakce = open("data/collisions/reaction.txt", "w")
+    file_reakce = open(f_out, "w")
 
     f = []
     for line in file_rozdel:

@@ -245,8 +245,9 @@ def solve_ODE(t1, dt, file_species, file_reaction_data, file_Edist, file_reactio
 
     speci, pomoc = species(file_species)
     
-    # integrate the reaction rate coeffs and save
-    RC.read_file(file_reaction_data, file_Edist, file_reaction_coeffs, Te, maxwell)
+    # integrate the reaction rate coeffs and save if needed
+    if file_reaction_data != None:
+        RC.read_file(file_reaction_data, file_Edist, file_reaction_coeffs, Te, maxwell)
 
     # load the saved reaction rate coeffs
     k_c, REACT, Z, Eloss, Elastic = reactions(file_reaction_coeffs, pomoc, speci)
@@ -324,10 +325,10 @@ difu = 1.26076522957e-12
 ##############################
 #soubor_rozdel = "data/collisions/eedf_He_H2_14Td_300K.txt"
 #soubor_rozdel = "data/collisions/eedf_He_H2_14Td_77K.txt"
-file_Edist = "data/collisions/elendif/eedf_He_H2_14Td_100_1000.txt" #rozdelovaci funkce
-file_species = "data/species.txt"       # vstupni koncentrace a parametry castic
-file_reaction_data = "data/collisions/electron.txt"  # reakce + data pro CS, k_rate
-file_reaction_coeffs = "data/collisions/reaction.txt" # vygenerovane reakce + k_rate
+file_Edist = "data/collisions/elendif/eedf_He_H2_14Td_100_1000.txt" # electron energy distribution function
+file_species = "data/species.txt"       # definition of species with initial concentrations
+file_reaction_data = "data/collisions/electron.txt"   # reactions + temperature dependent data + cross sections (optional, can be None)
+file_reaction_coeffs = "data/collisions/reaction.txt" # reactions with rate coefficients
 
 Tn = 77
 Te = 20000
