@@ -19,7 +19,7 @@ def rate_coef(f, CS_E, Te, maxwell):
     from scipy.interpolate import interp1d
     if (maxwell == False):
         if (CS_E[0,0] != 0): 
-            print CS_E[0]
+            print(CS_E[0])
             CS_E = N.insert(CS_E,0,0, axis =0)            
         points = f[:,0]      
         points = points.T.reshape((-1,1))

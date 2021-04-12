@@ -20,7 +20,7 @@ class Rovnice:
         #self.reakce = reakce
   
 def species(soubor):
-    species = file(soubor,"r")
+    species = open(soubor,"r")
     speci = []	
     pomoc = {}
     index = 0			
@@ -37,7 +37,7 @@ def species(soubor):
     return speci, pomoc
         
 def reactions(soubor, pomoc, speci):
-    reaction = file(soubor,"r")
+    reaction = open(soubor,"r")
     index = 0
     k_c = []
     REACT = []
@@ -136,7 +136,7 @@ def Q_elastic(Te, nn, Mn, Me, rate):
     return 1.5  * k_b * (Tn - Te) / tau_cool 
 
 def actual_rate(k_c, file_reaction_coeffs):
-    reaction = file(file_reaction_coeffs,"r")
+    reaction = open(file_reaction_coeffs,"r")
     index = 0
     for line in reaction:             
             rovnice = line.split()
@@ -277,11 +277,11 @@ def solve_ODE(t1, dt, file_species, file_reaction_data, file_Edist, file_reactio
             
             if (r.t > 1e-4):
                 if N.all(N.abs((conc_srov / r.y - 1)) < 1e-5):
-                    print "zastaveno v case ", r.t
+                    print("zastaveno v case ", r.t)
                     break
             conc_srov = r.y
         except: 
-            print "stop"
+            print("stop")
             break
         
     vyvoj = N.array(vyvoj)
@@ -289,7 +289,7 @@ def solve_ODE(t1, dt, file_species, file_reaction_data, file_Edist, file_reactio
 
     for i in range(len(speci)):
         speci[i].conc = r.y[i]
-    print r.y[-1] * Q0 / k_b, r.y[-1]
+    print(r.y[-1] * Q0 / k_b, r.y[-1])
     Te =r.y[-1] * Q0 / k_b
 
     return r, cas, vyvoj, speci, Te
@@ -346,13 +346,13 @@ concentrations, cas, vyvoj, speci, Te = solve_ODE(time, time_step, file_species,
 for i in range(len(speci)):
     print speci[i].name, ": \t %e" % speci[i].conc
 
-print Te
-time_step = time_step /1e3
-time = time/200
-concentrations, cas, vyvoj, speci, Te = solve_ODE(time, time_step, file_species, file_reaction_data, file_Edist, file_reaction_coeffs, Te, True)
+print(Te)
+time_step = 1e-6
+time = 1e-4
+concentrations, cas, vyvoj, speci, Te = solve_ODE(time, time_step, file_species, file_reaction_data, None, file_reaction_coeffs, Te, True)
 
 for i in range(len(speci)):
-    print speci[i].name, ": \t %e" % speci[i].conc
+    print(speci[i].name, ": \t %e" % speci[i].conc)
 
 import matplotlib.pyplot as plt
 f, ax = plt.subplots()
