@@ -77,7 +77,7 @@ def CS_balance(rovnice,r_rate, T):
             v1 = int(new_rovnice[new_rovnice.index("v=")+2])
         else:   v1 = 0
         try:
-            rate = r_rate * N.exp(((v1-v0)*omega*cm2J/Q0)/T)
+            rate = N.exp(N.log(r_rate) + ((v1-v0)*omega*cm2J/Q0)/T)
             if (N.isnan(rate) == True): rate = 0
         except: rate = 0
 
