@@ -207,12 +207,12 @@ def create_ODE(t, concentration, k_c, Z, REACT, pomoc, speci, Eloss, maxwell,Ela
     if maxwell:
         # recalculate coefficients if needed
         TeK =concentration[-1] * Q0 / k_b
-        Te = concentration[-1]
+        TeeV = concentration[-1]
 
-        if (Te != Te_last_coeffs):
+        if (TeeV != Te_last_coeffs):
                 RC.read_file(file_reaction_data, file_Edist, file_reaction_coeffs, TeK, maxwell)
                 k_c = actual_rate(k_c, file_reaction_coeffs)
-                Te_last_coeffs = Te
+                Te_last_coeffs = TeeV
 
     # calculate effective rate coefficients (dependent on concentrations)
     for d in dif_in:
@@ -229,7 +229,7 @@ def create_ODE(t, concentration, k_c, Z, REACT, pomoc, speci, Eloss, maxwell,Ela
     f = N.exp(REACT * N.log(concentration[:-1])) * k_c
 
     if maxwell:
-        E_loss = calculate_E_loss(Te, f, concentration, k_c, pomoc, speci, Eloss, Elastic)
+        E_loss = calculate_E_loss(TeK, f, concentration, k_c, pomoc, speci, Eloss, Elastic)
     else:
         E_loss = 0
     global vibr_T
