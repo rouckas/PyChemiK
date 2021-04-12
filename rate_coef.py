@@ -92,19 +92,24 @@ def mxw_E(E,T,M=M_EL):
 
     
 def read_file(f_CS, f_distr, f_out, Te, maxwell = False):
-    file_rozdel = open(f_distr)
+    if not maxwell:
+        file_rozdel = open(f_distr)
     file_prurez = open(f_CS)
     file_reakce = open(f_out, "w")
 
-    f = []
-    for line in file_rozdel:
-		m1, m2 = line.split()
-		f.append([float(m1), float(m2)])
-		#f.append([float(m1), mxw_E(float(m1),Te*K_B/Q0)])   # cely vypocet s Maxwellovym rozdelenim      
-    f = N.array(f) 
-    del m1, m2
-    if (maxwell == True):
+    if maxwell:
+        nsampl = 1000
+        f = N.zeros((nsampl, 2))
+        f[:,0] = N.linspace(0, Te*K_B/Q0*10, nsampl)
         f[:,1] = mxw_E(f[:,0], Te*K_B/Q0)   # Maxwellowo rozdeleni    
+    else:
+        f = []
+        for line in file_rozdel:
+            m1, m2 = line.split()
+            f.append([float(m1), float(m2)])
+            #f.append([float(m1), mxw_E(float(m1),Te*K_B/Q0)])   # cely vypocet s Maxwellovym rozdelenim
+        f = N.array(f)
+        del m1, m2
     CS_E = []
     inverse = False
     for line in file_prurez:        
