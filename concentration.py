@@ -47,6 +47,7 @@ def reactions(soubor, pomoc, speci):
     for line in reaction:             
         try:
             rovnice = line.split()
+            if len(rovnice) == 0: continue
 
             if ("ENERGY LOSS = " in line):
                 E_L = re.search("ENERGY LOSS =\s+(\S+)", line).group(1)
