@@ -19,22 +19,20 @@ class Rovnice:
         self.Eloss = Eloss
         #self.reakce = reakce
   
-def species(soubor):
-    species = open(soubor,"r")
-    speci = []	
-    pomoc = {}
+def load_species(fname):
+    species = open(fname,"r")
+    species_list = []	
+    species_numbers = {}
     index = 0			
     for line in species:
-        if ("#" in line): continue
+        line = line.partition("#")[0]
         try:
             name, init_conc, mass, radii = line.split()
-            speci.append(1)
-            speci[index] = Prvky(name, float(init_conc), float(mass), float(radii))
-            pomoc[name] = index
-            index += 1
+            species_list.append(Prvky(name, float(init_conc), float(mass), float(radii)))
+            species_numbers[name] = len(species_list)-1
         except: continue
     species.close()
-    return speci, pomoc
+    return species_list, species_numbers
         
 def reactions(soubor, pomoc, speci):
     reaction = open(soubor,"r")
@@ -244,7 +242,7 @@ def create_ODE(t, concentration, k_c, Z, REACT, pomoc, speci, Eloss, maxwell,Ela
     
 def solve_ODE(t1, dt, file_species, file_reaction_data, file_Edist, file_reaction_coeffs, Te, maxwell):
 
-    speci, pomoc = species(file_species)
+    speci, pomoc = load_species(file_species)
     
     # integrate the reaction rate coeffs and save if needed
     if file_reaction_data != None:
