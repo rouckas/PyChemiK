@@ -34,14 +34,15 @@ def load_species(fname):
     species.close()
     return species_list, species_numbers
         
-def reactions(soubor, pomoc, speci):
-    reaction = open(soubor,"r")
+def load_reactions(fname, specdict, speclist):
+    reaction = open(fname,"r")
     index = 0
     k_c = []
     REACT = []
     PROD = []
     Eloss = []
     Elastic = []
+    R_special = {"difuze":[], "ambi_dif":[], "Stevefelt":[]}
     for line in reaction:             
         try:
             rovnice = line.split()
@@ -53,42 +54,34 @@ def reactions(soubor, pomoc, speci):
             else:
                 Eloss.append(0)
                 
-            if (rovnice[0] == "Stevefelt"):
-                St.append(index)
-                k_c.append(0)
-            elif (rovnice[0] == "ambi_dif"):
-                ambi_di.append([index,speci[pomoc[rovnice[1]]].mass])
-                k_c.append(0)            
-                               
-            elif (rovnice[0] == "difuze"):
-                dif_in.append([index,speci[pomoc[rovnice[1]]].mass])
-                k_c.append(0)  
-               
-            else:
-                try:
-                    k_c.append(float(rovnice[0]))
-                except: 
-                    continue
-                                                  
+            try:
+                k = float(rovnice[0])
+            except:
+                R_type = rovnice[0]
+                record = (index, speclist[specdict[rovnice[1]]].mass)
+                R_special[R_type] = R_special.get(R_type, []) + [record]
+                k = 0
+            k_c.append(k)
+
             rozdel = rovnice.index("=>")
             pozn = rovnice.index("//")
             reactant=(rovnice[1:rozdel])
             product=(rovnice[rozdel+1:pozn])
-            REACTp = N.zeros(len(pomoc),int)
-            PRODp = N.zeros(len(pomoc),int)
+            REACTp = N.zeros(len(specdict),int)
+            PRODp = N.zeros(len(specdict),int)
         except: continue
         for i in range(len(reactant)):
-            if (REACTp[pomoc[reactant[i]]] == 0):      # - zbytecna podminka .. ?
+            if (REACTp[specdict[reactant[i]]] == 0):      # - zbytecna podminka .. ?
                 j = reactant.count(reactant[i])
-                REACTp[pomoc[reactant[i]]] = j
+                REACTp[specdict[reactant[i]]] = j
                 if (i > 0):
                     if ("typ reakce = elastic" in line):
-                        Elastic.append([index, pomoc[reactant[i]]])
+                        Elastic.append([index, specdict[reactant[i]]])
         REACT.append(REACTp)
         for i in range(len(product)):
-            if (PRODp[pomoc[product[i]]] == 0):      # - zbytecna podminka .. ?
+            if (PRODp[specdict[product[i]]] == 0):      # - zbytecna podminka .. ?
                 j = product.count(product[i])
-                PRODp[pomoc[product[i]]] = j
+                PRODp[specdict[product[i]]] = j
         PROD.append(PRODp)             
         index += 1
     reaction.close()
@@ -102,7 +95,7 @@ def reactions(soubor, pomoc, speci):
     Z = N.transpose(Z)      
     Z = sp.csr_matrix(Z)                    
 
-    return k_c, REACT, Z, Eloss, Elastic
+    return k_c, REACT, Z, Eloss, Elastic, R_special
     
     
 def difuze(d, con, mass): 
@@ -197,7 +190,7 @@ def calculate_E_loss(Te, f, concentration, k_c, pomoc, speci, Eloss, Elastic):
     return E_loss
 
 
-def create_ODE(t, concentration, k_c, Z, REACT, pomoc, speci, Eloss, maxwell,Elastic):
+def create_ODE(t, concentration, k_c, Z, REACT, pomoc, speci, Eloss, maxwell, Elastic, R_special):
     # sestaveni rovnice pro resic lsoda; nevyzaduje vypocet jakobianu 
 
     global Te_last_coeffs
@@ -214,12 +207,15 @@ def create_ODE(t, concentration, k_c, Z, REACT, pomoc, speci, Eloss, maxwell,Ela
                 Te_last_coeffs = TeeV
 
     # calculate effective rate coefficients (dependent on concentrations)
-    for d in dif_in:
+    for d in R_special["difuze"]:
         k_c[d[0]] = difuze(difu, concentration[pomoc["He"]], d[1])
-    for a in ambi_di:
+    for a in R_special["ambi_dif"]:
+        # calculate the loss rate due to ambipolar diffusion
+        # This is not correct if the diffusion coefficients of different ions and significantly different
+        # It is rough approximation, calculation of spatial distribution would be needed for accuracy.
         k_c[a[0]] = ambi_dif(rate_langevin(a[1]) , concentration[pomoc["He"]], a[1], concentration[-1] * Q0 / k_b)
     rate_st = Stevefelt_formula(concentration[pomoc["e-"]], concentration[-1] * Q0 / k_b)
-    for S in St:
+    for S in R_special["Stevefelt"]:
         k_c[S] = rate_st
 
 
@@ -249,7 +245,7 @@ def solve_ODE(t1, dt, file_species, file_reaction_data, file_Edist, file_reactio
         RC.read_file(file_reaction_data, file_Edist, file_reaction_coeffs, Te, maxwell)
 
     # load the saved reaction rate coeffs
-    k_c, REACT, Z, Eloss, Elastic = reactions(file_reaction_coeffs, pomoc, speci)
+    k_c, REACT, Z, Eloss, Elastic, R_special = load_reactions(file_reaction_coeffs, pomoc, speci)
 
     t0 = 0
     y0 = N.array([s.conc for s in speci] + [Te * k_b / Q0])
@@ -264,8 +260,8 @@ def solve_ODE(t1, dt, file_species, file_reaction_data, file_Edist, file_reactio
     r = ode(create_ODE).set_integrator('lsoda')
     stopni = 0
 
-    create_ODE(1.27e-22, y0, k_c, Z, REACT, pomoc, speci, Eloss, maxwell,Elastic)
-    r.set_initial_value(y0, t0).set_f_params(k_c, Z, REACT, pomoc, speci, Eloss, maxwell,Elastic)
+    create_ODE(1.27e-22, y0, k_c, Z, REACT, pomoc, speci, Eloss, maxwell, Elastic, R_special)
+    r.set_initial_value(y0, t0).set_f_params(k_c, Z, REACT, pomoc, speci, Eloss, maxwell, Elastic, R_special)
     while r.successful() and r.t < t1:
         try:
             r.integrate(r.t+dt)
@@ -298,9 +294,6 @@ def solve_ODE(t1, dt, file_species, file_reaction_data, file_Edist, file_reactio
 ##############################
 Te_last_coeffs = 1.73
 Te_last = 1.73
-St = []   
-ambi_di = [] 
-dif_in = []
 conc_srov = 0
 
 ##############################
