@@ -35,6 +35,24 @@ def load_species(fname):
     return species_list, species_numbers
         
 def load_reactions(fname, specdict, speclist):
+    """load the list of reactions from file 'fname'
+
+    Returns:
+        k_c[i]: list of reaction rate coefficients
+        REACT[i, j]: matrix(#reactions, #species), sparse matrix that specifies
+            the reactants of each species. If REACT[i, j] == N, then N molecules of
+            species j participate as reactants in reaction j (typically, N=0 or 1).
+        Z[i, j]: number of molecules of species j produced in reaction i.
+            Z[i, j] < 0 if species j is destroyed in reaction i.
+        Eloss[i]: electron energy loss in inelastic collisions
+        Elastic[k]: list elastic electron collisions. Elastic[k] = [i, j], where
+            i = index of the reaction
+            j = the second interacting species
+        R_special[reaction_type]: dictionary of lists of special reactions with
+            non-constant reaction rate coefficients. E.g.
+            R_special["ambi_dif"][0] = [i, m], where i is and index of an effective
+            ambipolar diffusion reaction and m is the mass of the ionic species
+    """
     reaction = open(fname,"r")
     index = 0
     k_c = []
