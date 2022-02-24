@@ -270,7 +270,10 @@ def print_reaction_coeffs(rlist, state, file=sys.stdout):
         k = r.k(state)
         if k is None:
             k = r.type
-        print("\t".join([str(k)] + r.reactants + ["=>"] + r.products), "//", r.comment, file=file)
+        comment = r.comment
+        if r.type == "elastic":
+            comment += " typ reakce = elastic"
+        print("\t".join([str(k)] + r.reactants + ["=>"] + r.products), "//", comment, file=file)
 
     
 def read_file(f_CS, f_distr, f_out, Te, maxwell = False):
