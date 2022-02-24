@@ -225,7 +225,7 @@ def create_ODE(t, concentration, k_c, Z, REACT, pomoc, speci, Eloss, maxwell, El
                 EEDF = N.loadtxt(file_Edist)
             else:
                 EEDF = None
-            RC.print_reaction_coeffs_file(rlist, RC.State(Tn, Te, EEDF), file_reaction_coeffs)
+            RC.print_reaction_coeffs_file(rlist, RC.State(Tn, TeK, EEDF), file_reaction_coeffs)
             #RC.read_file(file_reaction_data, file_Edist, file_reaction_coeffs, TeK, maxwell)
             k_c = actual_rate(k_c, file_reaction_coeffs)
             Te_last_coeffs = TeeV
