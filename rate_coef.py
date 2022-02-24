@@ -1,5 +1,7 @@
 import numpy as N
+import numpy as np
 from math import pi
+import sys
 
 M_EL =  9.109534e-31
 K_B = 1.380662e-23
@@ -89,6 +91,181 @@ def CS_balance(rovnice,r_rate, T):
 def mxw_E(E,T,M=M_EL):   
     E_max = T
     return 2*pi*(N.sqrt(1/pi/E_max)**3)*N.sqrt(E)*N.exp(-E/E_max)
+
+class State:
+    def __init__(self, Tg, Te=None, EEDF=None):
+        self.Tg = Tg
+        self.Te = Te
+        self.EEDF = EEDF
+
+class Reaction:
+    def __init__(self, reactants, products, 
+            reaction_type=None, k=None, k_hydhel=None, k_arrh=None, CS=None,
+            energy_change=None, comment=""):
+        self.reactants = reactants
+        self.products = products
+        self.type = reaction_type
+        self.comment = comment
+
+        if energy_change is not None:
+            self.energy_change = energy_change
+
+        self.k_type = None
+        if k is not None:
+            self._k = k
+            self.k_type = "k"
+
+        if k_hydhel is not None:
+            if self.k_type is not None:
+                raise RuntimeError("reaction" + " ".join(reactants + ["=>"] + products) + "has multiple values of k")
+            self.k_hydhel = k_hydhel
+            self.k_type = "k_hydhel"
+
+        if k_arrh is not None:
+            if self.k_type is not None:
+                raise RuntimeError("reaction" + " ".join(reactants + ["=>"] + products) + "has multiple values of k")
+            self.k_arrh = k_arrh
+            self.k_type = "k_arrh"
+
+        if CS is not None:
+            if self.k_type is not None:
+                raise RuntimeError("reaction" + " ".join(reactants + ["=>"] + products) + "has multiple values of k")
+            self.CS = CS
+            self.k_type = "CS"
+
+    def __repr__(self):
+        res = "\t".join(["reaction"] + self.reactants + ["=>"] + self.products)
+        return res
+
+    def k(self, state):
+
+        if self.type in ["Stevefelt", "ambi_dif", "diffusion_ar"]:
+            # effective r. rate coeffs, need to know num. dens of other species first
+            return None
+
+        if self.k_type == "k":
+            return self._k
+
+        if self.k_type == "k_hydhel": # function of Te
+            suma = 0
+            for i, ai in enumerate(self.k_hydhel):
+                suma += ai * ((np.log(state.Te*K_B/Q0))**i)
+            return np.exp(suma)
+
+        if self.k_type == "k_arrh":  # function of Tg
+            k0, Ta = self.k_arrh
+            return k0*np.exp(-state.Tg/Ta)
+
+        if self.k_type == "CS":       # function of EEDF or Te
+            return rate_coef(state.EEDF, self.CS, state.Te, maxwell = state.EEDF is None)
+
+class InverseReaction(Reaction):
+
+    def __repr__(self):
+        res = "\t".join(["reaction"] + self.products + ["=>"] + self.reactants)
+        return res
+
+    def k(self, state):
+        g = 1 # statistical factor, not yet configurable. OK for vibrational trans. only
+        kforward = Reaction.k(self, state)*g*np.exp(self.energy_change*Q0/(K_B*state.Te))
+        return kforward
+
+def load_reaction_data(fname):
+    rlist = []
+
+    state = 1
+    """
+    state = 0: looking for data
+    state = 1: decoding reaction
+    state = 2: loading cross section
+    """
+    reaction = {}
+    inverse = False
+
+    f = open(fname)
+    for line in f:
+        line, _, comment = line.partition("#") # skip comments
+        toks = line.split()
+        if len(toks) == 0: continue
+
+        if state == 1:
+            if toks[0] == "reaction":
+                if reaction != {}:
+                    rlist.append(Reaction(**reaction))
+                    #print(rlist[-1], rlist[-1].k(State(77., 77., None)))
+                    # save previous record
+                    if inverse:
+                        #print("inverse")
+                        rlist.append(InverseReaction(**reaction))
+                        #print(rlist[-1], rlist[-1].k(State(77., 77., None)))
+                        inverse = False
+                    pass
+
+                state = 1
+                reaction = {}
+                arrow = toks.index("=>")
+                reaction["reactants"] = toks[1:arrow]
+                reaction["products"] = toks[arrow+1:]
+                reaction["comment"] = comment.strip()
+                continue
+
+            elif toks[0] == "k":
+                reaction["k"] = float(toks[1])
+                continue
+
+            elif toks[0] == "k_hydhel":
+                reaction["k_hydhel"] = list(map(float, toks[1:]))
+                continue
+
+            elif toks[0] == "type":
+                reaction["reaction_type"] = toks[1]
+                continue
+
+            elif toks[0] == "inverse":
+                inverse = True
+                continue
+
+            elif toks[0] == "energy_change":
+                reaction["energy_change"] = float(toks[1])
+                continue
+
+            if toks[0] == "cross_section":
+                state = 2
+                CS = []
+                continue
+
+        elif state == 2:
+            if toks[0] == "end":
+                reaction["CS"] = CS
+                state = 1
+                continue
+
+            else:
+                f1, f2 = toks
+                CS.append([float(f1), float(f2)])
+
+
+    # save last record
+    rlist.append(Reaction(**reaction))
+    if inverse:
+        rlist.append(InverseReaction(**reaction))
+    pass
+
+
+    return rlist
+
+
+def print_reaction_coeffs_file(rlist, state, filename):
+    with open(filename, "w") as f:
+        print_reaction_coeffs(rlist, state, f)
+
+
+def print_reaction_coeffs(rlist, state, file=sys.stdout):
+    for r in rlist:
+        k = r.k(state)
+        if k is None:
+            k = r.type
+        print("\t".join([str(k)] + r.reactants + ["=>"] + r.products), "//", r.comment, file=file)
 
     
 def read_file(f_CS, f_distr, f_out, Te, maxwell = False):

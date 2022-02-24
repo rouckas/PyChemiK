@@ -1,6 +1,4 @@
-reaction	e-	H2	=>	e-	H2	# Phelps, typ reakce elastic
-type elastic
-cross_section
+begin	e-	H2	=>	e-	H2	// Phelps, typ reakce = elastic
 	0	6.4E-016
 	0.001	6.4E-016
 	0.002	6.5E-016
@@ -68,9 +66,7 @@ cross_section
 	7000	1.04E-017
 end
 
-reaction	e-	He	=>	e-	He	# Phelps, typ reakce elastic
-type elastic
-cross_section
+begin	e-	He	=>	e-	He	// Phelps, typ reakce = elastic
 	0	4.96E-016
 	0.001	4.98E-016
 	0.002	5.02E-016
@@ -133,9 +129,7 @@ cross_section
 	1000	1.7E-017
 end
 
-reaction	e-	Ar	=>	e-	Ar	# Phelps; typ reakce elastic
-type elastic
-cross_section
+begin	e-	Ar	=>	e-	Ar	// Phelps; typ reakce = elastic
 	0	7.5E-016
 	0.001	7.5E-016
 	0.002	7.1E-016
@@ -192,9 +186,7 @@ cross_section
 	100	5.25E-016
 end
 
-reaction	e-	H	=>	e-	e-	H+	# hydhel
-energy_change 13.598
-cross_section
+begin	e-	H	=>	e-	e-	H+	// hydhel
 	 0	0
 	 1.000000E+00	 0.000000E+00
 	 1.151395E+00	 0.000000E+00
@@ -248,10 +240,7 @@ cross_section
 	 1.000000E+03	 1.121555E-17
 end
 
-reaction	e-	H2	=>	e-	H2(v=1)	# hydhel; inverse=True, 
-inverse
-energy_change 0.545650198 #0.516
-cross_section
+begin	e-	H2	=>	e-	H2(v=1)	// hydhel; inverse=True, ENERGY LOSS = -0.516
 	 0	0
 	 8.950000E-01	0
 	 1.000000E+00	2.241028E-18
@@ -306,10 +295,7 @@ cross_section
 	 1.000000E+03	 1.034105E-125
 end
 
-reaction	e-	H2	=>	e-	H2(v=2)	# hydhel; inverse=True, vibration_cooling, 
-inverse
-energy_change 1.091300396 # 1.032
-cross_section
+begin	e-	H2	=>	e-	H2(v=2)	// hydhel; inverse=True, vibration_cooling, ENERGY LOSS = -1.032
 	0	0
 	 1.000000E+00	0.000000E+00
 	 1.151395E+00	 5.718935E-20
@@ -363,10 +349,7 @@ cross_section
 	 1.000000E+03	 9.911468E-11
 end
 
-reaction	e-	H2	=>	e-	H2(v=3)	# hydhel; inverse=True, vibration_cooling
-energy_change 1.63695059 # 1.564
-inverse
-cross_section
+begin	e-	H2	=>	e-	H2(v=3)	// hydhel; inverse=True, vibration_cooling, ENERGY LOSS = -1.564
 0	0
 1.5	0
 1.8	3E-020
@@ -386,28 +369,21 @@ cross_section
 50	0
 end
 
-reaction	e-	H2(v=1)	=>	e-	H2(v=2)	# hydhel_vibr, funkce pro rate, vibration_cooling
-	energy_change 0.545650198 # 0.516
-	k_hydhel	-1.977634E+01	   9.564088E-01	  -6.931762E-01	   1.673973E-01	  -3.230467E-02	   5.844010E-03	  -8.590100E-04	   7.465076E-05	  -2.670220E-06
+begin	e-	H2(v=1)	=>	e-	H2(v=2)	// hydhel_vibr, funkce pro rate, vibration_cooling, ENERGY LOSS = -0.516
+-1.977634E+01	   9.564088E-01	  -6.931762E-01	   1.673973E-01	  -3.230467E-02	   5.844010E-03	  -8.590100E-04	   7.465076E-05	  -2.670220E-06
+begin	e-	H2(v=2)	=>	e-	H2(v=1)	// hydhel_vibr, funkce pro rate, ENERGY LOSS = 0.516
+-1.929087E+01	 4.714322E-01	-4.524406E-01	 8.960513E-02	-1.460779E-02	 3.015245E-03	-5.583268E-04	 5.575454E-05	-2.143551E-06
 
-reaction	e-	H2(v=2)	=>	e-	H2(v=1)	# hydhel_vibr, funkce pro rate
-	energy_change -0.545650198 # -0.516
-	k_hydhel	-1.929087E+01	 4.714322E-01	-4.524406E-01	 8.960513E-02	-1.460779E-02	 3.015245E-03	-5.583268E-04	 5.575454E-05	-2.143551E-06
-
-reaction	e-	H2(v=2)	=>	e-	H2(v=3)	# hydhel_vibr, funkce pro rate
-	energy_change 0.545650198 # 0.516
-	k_hydhel   -1.937087E+01	    9.563986E-01	   -6.931517E-01	    1.673707E-01	   -3.228933E-02	    5.839032E-03	   -8.581058E-04	    7.456527E-05	   -2.666953E-06
-
-reaction	e-	H2(v=3)	=>	e-	H2(v=2)	# hydhel_vibr, funkce pro rate
-	energy_change -0.545650198 # -0.516
-	k_hydhel	-1.891549E+01	 5.014967E-01	-4.673877E-01	 9.445845E-02	-1.572267E-02	 3.196102E-03	-5.779051E-04	 5.700957E-05	-2.179234E-06
+begin	e-	H2(v=2)	=>	e-	H2(v=3)	// hydhel_vibr, funkce pro rate, ENERGY LOSS = -0.516
+   -1.937087E+01	    9.563986E-01	   -6.931517E-01	    1.673707E-01	   -3.228933E-02	    5.839032E-03	   -8.581058E-04	    7.456527E-05	   -2.666953E-06
+begin	e-	H2(v=3)	=>	e-	H2(v=2)	// hydhel_vibr, funkce pro rate, ENERGY LOSS = 0.516
+-1.891549E+01	 5.014967E-01	-4.673877E-01	 9.445845E-02	-1.572267E-02	 3.196102E-03	-5.779051E-04	 5.700957E-05	-2.179234E-06
 
 
 
 
 
-reaction	e-	H2 	=>	e-	H2+	e-		# hydhel
-cross_section
+begin	e-	H2 	=>	e-	H2+	e-		// hydhel
 	 0	0
 	 1.000000E+00  0.000000E+00
 	 1.151395E+00  0.000000E+00
@@ -461,8 +437,7 @@ cross_section
 	 1.000000E+03  1.975238E-17
 end
 
-reaction	e-	H2	=>	e-	H	H	# hydhel
-cross_section
+begin	e-	H2	=>	e-	H	H	// hydhel
 	 0	0
 	 1.000000E+00  0.000000E+00
 	 1.151395E+00  0.000000E+00
@@ -516,8 +491,7 @@ cross_section
 	 1.000000E+03  0.000000E+00
 end
 
-reaction	e-	H2	=>	e-	H+	H	e-	# hydhel
-cross_section
+begin	e-	H2	=>	e-	H+	H	e-	// hydhel
 	 0	0
 	 1.000000E+00  0.000000E+00
 	 1.151395E+00  0.000000E+00
@@ -571,8 +545,7 @@ cross_section
 	 1.000000E+03  9.235882E-19
 end
 
-reaction	e-	H2+	=>	e-	H+	H		# hydhel
-cross_section
+begin	e-	H2+	=>	e-	H+	H		// hydhel
 	 0	0     
 	 1.000000E+00  0.000000E+00
 	 1.151395E+00  0.000000E+00
@@ -626,8 +599,7 @@ cross_section
 	 1.000000E+03  3.757253E-17
 end
 
-reaction	e-	H2+	=>	e-	H+	H+	e-	# hydhel
-cross_section
+begin	e-	H2+	=>	e-	H+	H+	e-	// hydhel
  0	0
 	 1.000000E+00  0.000000E+00
 	 1.151395E+00  0.000000E+00
@@ -681,8 +653,7 @@ cross_section
 	 1.000000E+03  3.707611E-18
 end
 
-reaction	e-	H3+	=>	H	H	H		# hydhel 
-cross_section
+begin	e-	H3+	=>	H	H	H		// hydhel 
 0	0
 0.0001	5.69293253891501E-012
 0.0002	2.5653790421547E-012
@@ -913,8 +884,7 @@ cross_section
 2.50E+001		3.51415979165551E-017
 end
 
-reaction	e-	H3+	=>	e-	H+	H	H	# hydhel
-cross_section
+begin	e-	H3+	=>	e-	H+	H	H	// hydhel
 	 0	0
 	 1.000000E+00  0.000000E+00
 	 1.151395E+00  0.000000E+00
@@ -968,8 +938,7 @@ cross_section
 	 1.000000E+03  2.160425E-16
 end
 
-reaction	e-	H-	=>	e-	H	e-		# hydhel
-cross_section
+begin	e-	H-	=>	e-	H	e-		// hydhel
 	 0	0
 	 1.000000E+00  8.144927E-18
 	 1.151395E+00  2.091704E-17
@@ -1023,8 +992,7 @@ cross_section
 	 1.000000E+03  2.270899E-16
 end
 
-reaction	e-	H-	=>	e-	H+	e-	e-	# hydhel
-cross_section
+begin	e-	H-	=>	e-	H+	e-	e-	// hydhel
 	 0	0
 	 1.000000E+00  0.000000E+00
 	 1.151395E+00  0.000000E+00
@@ -1078,8 +1046,7 @@ cross_section
 	 1.000000E+03  8.164305E-18
 end
 
-reaction	e-	He	=>	e-	He+	e-		# hydhel
-cross_section
+begin	e-	He	=>	e-	He+	e-		// hydhel
 	 0	0
 	 1.000000E+00  0.000000E+00
 	 1.151395E+00  0.000000E+00
@@ -1133,8 +1100,7 @@ cross_section
 	 1.000000E+03  1.247750E-17
 end
 
-reaction	e-	He	=>	e-	He(1s2s)		# hydhel
-cross_section
+begin	e-	He	=>	e-	He(1s2s)		// hydhel
 	 0	0.000000E+00
 	 1.000000E+00	0.000000E+00
 	 1.151395E+00	 0.000000E+00
@@ -1188,8 +1154,7 @@ cross_section
 	 1.000000E+03	 1.796989E-19
 end
 
-reaction	e-	He(1s2s)	=>	e-	He+	e-	# hydhel
-cross_section
+begin	e-	He(1s2s)	=>	e-	He+	e-	// hydhel
 	 0	0
 	 1.000000E+00	 0.000000E+00
 	 1.151395E+00	 0.000000E+00
@@ -1243,8 +1208,7 @@ cross_section
 	 1.000000E+03	 5.381642E-17
 end
 
-reaction	e-	Ar	=>	e-	e-	Ar+	# Phelp
-cross_section
+begin	e-	Ar	=>	e-	e-	Ar+	// Phelp
 	    0.0000	   0.0000E-16
 	   15.8000	   0.0000E-16
 	   16.0000	   0.0202E-16
@@ -1277,123 +1241,119 @@ cross_section
 	10000.0000	   0.1350E-16
 end
 
-reaction	e-	H+	=>	H	# Stevefelt's analytical formula
-	type Stevefelt
-
-reaction	e-	Ar+	=>	Ar	# Stevefelt's analytical formula
-	type Stevefelt
-
-reaction	e-	He+	=>	He	# Stevefelt's analytical formula
-	type Stevefelt
+begin	e-	H+	=>	H	// Stevefelt's analytical formula
+	koef	Stevefelt
+begin	e-	Ar+	=>	Ar	// Stevefelt's analytical formula
+	koef	Stevefelt
+begin	e-	He+	=>	He	// Stevefelt's analytical formula
+	koef	Stevefelt
 
 
-reaction	H2+	H2	=>	H3+	H			# souhrn KFPP 300K, KIDA pro 77 K
-	k	2e-09
+begin	H2+	H2	=>	H3+	H			// souhrn KFPP 300K, KIDA pro 77 K
+	koef	2e-09
+begin	H-	H	=>	H2	e-			//    - 1.3e-9 KIDA 
+	koef	1.250989258568e-09
 
-reaction	H-	H	=>	H2	e-			#    - 1.3e-9 KIDA 
-	k	1.250989258568e-09
+begin	H	H	H	=>	H	H2		//
+	koef	4.7402597e-32
 
-reaction	H	H	H	=>	H	H2		#
-	k	4.7402597e-32
-
-reaction	H+	H-	=>	H2+	e-			#  - 4.54e-7 KIDA
-	k	3.07651346263e-09
-reaction	H+	H-	=>	H	H			# KIDA, srovnej Talk-Urbain
-	k	4.54e-7	
-reaction	He+	H2	=>	H+	H	He		# souhrn KFPP 78K
-	k	1.5e-13
-reaction	ArH+	H2	=>	H3+	Ar			# souhrn KFPP 80K
-	k	9.5e-10
-reaction	Ar+	H2	=>	ArH+	H			# souhrn KFPP 80K
-	k	6.696e-10
-reaction	Ar+	H2	=>	H2+	Ar			# souhrn KFPP 80K
-	k	0.504e-10
-reaction	Ar	H2+	=>	ArH+	H			# souhrn KFPP 80K
-	k	1.24e-9
-reaction	He+	H2	=>	H2+	He			# souhrn KFPP 78K
-	k	0.255e-13
-reaction	He+	He	He	=>	He2+	He		#
-	k	1e-31
-reaction	He2+	Ar	=>	Ar+	He	He		#
-	k	2e-10
-reaction	H+	H2	He	=>	H3+	He		#
-	k	3e-29
-reaction	H+	H2	H2	=>	H3+	H2		#
-	k	3e-29
-reaction	H+	He	He	=>	HeH+	He		#
-	k	9e-32
-reaction	HeH+	H2	=>	H3+	He			# souhrn KFPP 296 K,  KIDA 1.8e-9
-	k	1.5e-9
-reaction	H2+	He	=>	HeH+	H			#	souhrn KFPP pro 298 K
-	k	1.3e-10
-reaction	H-	H3+	=>	H2	H2			# KIDA
-	k	4.54e-7
-reaction	H-	He+	=>	H	He			# KIDA
-	k	4.54e-7
-reaction	H-	He2+	=>	H	He	He		# KIDA
-	k	4.54e-7
-reaction	He(1s2s)	He(1s2s)	=>	He2+	e-	# Table A1, Petr
-	k	5e-9
-reaction	He(1s2s)	Ar	=>	Ar+	He	e-	# Table A1, Petr
-	k	7e-11
-reaction	He(1s2s)	H2	=>	H2+	He	e-	# Table A1, Petr
-	k	2.86e-11
-reaction	He(1s2s)	H2	=>	HeH+	H	e-	# Table A1, Petr
-	k	3.2e-12
-reaction	He(1s2s)	He(1s2s)	=>	He+	He	e-	# Petr
-	k	5e-9
-reaction	HeH+	H	=>	He	H2+			# KIDA
-	k	9.00e-10
-reaction	H2+	H	=>	H2	H+			# KIDA, odpovídá KFPP 298 K
-	k	6.40e-10
-reaction	H2+	H-	=>	H2	H			# KIDA
-	k	4.54e-7
-reaction	He+	H	=>	He	H+			# KIDA
-	k	1.90e-15
-reaction	H2wall H2wall	=> H2	#
-	k	0.9e-5
-reaction	H2wall H2wall	=> H2(v=1)	#
-	k	0.1e-5
-reaction	H2wall H2wall	=> H2(v=2)	#
-	k	0.01e-5
-reaction	H2wall H2wall	=> H2(v=3)	#
-	k	0.001e-5
-reaction	H+	=>	H+wall	#
-	type ambi_dif
-reaction	H2+	=>	H2+wall	#
-	type ambi_dif
-reaction	He+	=>	He+wall	#
-	type ambi_dif
-reaction	He2+	=>	He2+wall	#
-	type ambi_dif
-reaction	ArH+	=>	ArH+wall	#
-	type ambi_dif
-reaction	HeH+	=>	HeH+wall	#
-	type ambi_dif
-reaction	Ar+	=>	Ar+wall	#
-	type ambi_dif
-reaction	H3+	=>	H3+wall #
-	type ambi_dif
-reaction	H+wall	e-	=>	H	#
-	k	1e-4
-reaction	H2+wall	e-	=>	H2	#
-	k	1e-4
-reaction	He+wall	e-	=>	He	#
-	k	1e-4
-reaction	He2+wall	e-	=>	He	He	#
-	k	1e-4
-reaction	ArH+wall	e-	=>	Ar	H	#
-	k	1e-4
-reaction	HeH+wall	e-	=>	He	H	#
-	k	1e-4
-reaction	Ar+wall	e-	=>	Ar	#
-	k	1e-4
-reaction	H3+wall	e-	=>	H2	H	#
-	k	1e0
+begin	H+	H-	=>	H2+	e-			//  - 4.54e-7 KIDA
+	koef	3.07651346263e-09
+begin	H+	H-	=>	H	H			// KIDA, srovnej Talk-Urbain
+	koef	4.54e-7	
+begin	He+	H2	=>	H+	H	He		// souhrn KFPP 78K
+	koef	1.5e-13
+begin	ArH+	H2	=>	H3+	Ar			// souhrn KFPP 80K
+	koef	9.5e-10
+begin	Ar+	H2	=>	ArH+	H			// souhrn KFPP 80K
+	koef	6.696e-10
+begin	Ar+	H2	=>	H2+	Ar			// souhrn KFPP 80K
+	koef	0.504e-10
+begin	Ar	H2+	=>	ArH+	H			// souhrn KFPP 80K
+	koef	1.24e-9
+begin	He+	H2	=>	H2+	He			// souhrn KFPP 78K
+	koef	0.255e-13
+begin	He+	He	He	=>	He2+	He		//
+	koef	1e-31
+begin	He2+	Ar	=>	Ar+	He	He		//
+	koef	2e-10
+begin	H+	H2	He	=>	H3+	He		//
+	koef	3e-29
+begin	H+	H2	H2	=>	H3+	H2		//
+	koef	3e-29
+begin	H+	He	He	=>	HeH+	He		//
+	koef	9e-32
+begin	HeH+	H2	=>	H3+	He			// souhrn KFPP 296 K,  KIDA 1.8e-9
+	koef	1.5e-9
+begin	H2+	He	=>	HeH+	H			//	souhrn KFPP pro 298 K
+	koef	1.3e-10
+begin	H-	H3+	=>	H2	H2			// KIDA
+	koef	4.54e-7
+begin	H-	He+	=>	H	He			// KIDA
+	koef	4.54e-7
+begin	H-	He2+	=>	H	He	He		// KIDA
+	koef	4.54e-7
+begin	He(1s2s)	He(1s2s)	=>	He2+	e-	// Table A1, Petr
+	koef	5e-9
+begin	He(1s2s)	Ar	=>	Ar+	He	e-	// Table A1, Petr
+	koef	7e-11
+begin	He(1s2s)	H2	=>	H2+	He	e-	// Table A1, Petr
+	koef	2.86e-11
+begin	He(1s2s)	H2	=>	HeH+	H	e-	// Table A1, Petr
+	koef	3.2e-12
+begin	He(1s2s)	He(1s2s)	=>	He+	He	e-	// Petr
+	koef	5e-9
+begin	HeH+	H	=>	He	H2+			// KIDA
+	koef	9.00e-10
+begin	H2+	H	=>	H2	H+			// KIDA, odpovídá KFPP 298 K
+	koef	6.40e-10
+begin	H2+	H-	=>	H2	H			// KIDA
+	koef	4.54e-7
+begin	He+	H	=>	He	H+			// KIDA
+	koef	1.90e-15
+begin	H2wall H2wall	=> H2	//
+	koef	0.9e-5
+begin	H2wall H2wall	=> H2(v=1)	//
+	koef	0.1e-5
+begin	H2wall H2wall	=> H2(v=2)	//
+	koef	0.01e-5
+begin	H2wall H2wall	=> H2(v=3)	//
+	koef	0.001e-5
+begin	H+	=>	H+wall	//
+	koef	ambi_dif
+begin	H2+	=>	H2+wall	//
+	koef	ambi_dif
+begin	He+	=>	He+wall	//
+	koef	ambi_dif
+begin	He2+	=>	He2+wall	//
+	koef	ambi_dif
+begin	ArH+	=>	ArH+wall	//
+	koef	ambi_dif
+begin	HeH+	=>	HeH+wall	//
+	koef	ambi_dif
+begin	Ar+	=>	Ar+wall	//
+	koef	ambi_dif
+begin	H3+	=>	H3+wall //
+	koef	ambi_dif
+begin	H+wall	e-	=>	H	//
+	koef	1e-4
+begin	H2+wall	e-	=>	H2	//
+	koef	1e-4
+begin	He+wall	e-	=>	He	//
+	koef	1e-4
+begin	He2+wall	e-	=>	He	He	//
+	koef	1e-4
+begin	ArH+wall	e-	=>	Ar	H	//
+	koef	1e-4
+begin	HeH+wall	e-	=>	He	H	//
+	koef	1e-4
+begin	Ar+wall	e-	=>	Ar	//
+	koef	1e-4
+begin	H3+wall	e-	=>	H2	H	//
+	koef	1e0
 
 
-reaction	e-	H2	=>	H	H-			# Celiberto, Janev, CS data
-cross_section
+begin	e-	H2	=>	H	H-			// Celiberto, Janev, CS data
 0.00E+000	0.00E+000
 1.25E-001	0.00E+000
 2.50E-001	0.00E+000
@@ -1599,22 +1559,22 @@ cross_section
 end
 
 
-reaction	e-	H3+	=>	H	H2	# hydhel, ~30%
-	k	0.5399e-08
+begin	e-	H3+	=>	H	H2	// hydhel, ~30%
+	koef	0.5399e-08
 
-reaction	e-	H3+	=>	e-	H2+	H		#
-	k	2.49719813561e-09
-reaction	e-	H	=>	H-				# ?  uprava 11 -> 13
-	k	9.80532939074e-13
-reaction	H	=>	H2wall		# diffusion na stenu (atomic radii)
-	type diffusion_ar
-reaction	H2(v=1)	=>	H2				# diffusion na stenu (atomic radii)
-	type diffusion_ar
-reaction	H2(v=2)	=>	H2				# diffusion na stenu (atomic radii)
-	type diffusion_ar
-reaction	He(1s2s)	=>	He				# diffusion na stenu (atomic radii)
-	type diffusion_ar
+begin	e-	H3+	=>	e-	H2+	H		//
+	koef	2.49719813561e-09
+begin	e-	H	=>	H-				// ?  uprava 11 -> 13
+	koef	9.80532939074e-13
+begin	H	=>	H2wall		// difuze na stenu (atomic radii)
+	koef	difuze
+begin	H2(v=1)	=>	H2				// difuze na stenu (atomic radii)
+	koef	difuze
+begin	H2(v=2)	=>	H2				// difuze na stenu (atomic radii)
+	koef	difuze
+begin	He(1s2s)	=>	He				// difuze na stenu (atomic radii)
+	koef	difuze
 
 
-reaction	H2(v=3)	=>	H2				# diffusion na stenu (atomic radii)
-	type diffusion_ar
+begin	H2(v=3)	=>	H2				// difuze na stenu (atomic radii)
+	koef	difuze
