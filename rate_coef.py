@@ -160,6 +160,11 @@ class Reaction:
             return rate_coef(state.EEDF, self.CS, state.Te, maxwell = state.EEDF is None)
 
 class InverseReaction(Reaction):
+    def __init__(self, reactants, products, **kwargs):
+        if kwargs.get("energy_change", None) is not None:
+            kwargs["energy_change"] *= -1
+
+        Reaction.__init__(self, products, reactants, **kwargs)
 
     def __repr__(self):
         res = "\t".join(["reaction"] + self.products + ["=>"] + self.reactants)
