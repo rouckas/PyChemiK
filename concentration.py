@@ -344,7 +344,7 @@ l = (r/2.405)**2
 concentrations, cas, vyvoj, speci, Te = solve_ODE(time, time_step, file_species, file_reaction_data, file_Edist, file_reaction_coeffs, Te, False)
 
 for i in range(len(speci)):
-    print speci[i].name, ": \t %e" % speci[i].conc
+    print(speci[i].name, ": \t %e" % speci[i].conc)
 
 print(Te)
 time_step = 1e-6
