@@ -60,7 +60,7 @@ def load_reactions(fname, specdict, speclist):
     PROD = []
     Eloss = []
     Elastic = []
-    R_special = {"difuze":[], "ambi_dif":[], "Stevefelt":[]}
+    R_special = {"diffusion_ar":[], "ambi_dif":[], "Stevefelt":[]}
     for line in reaction:             
         try:
             rovnice = line.split()
@@ -156,7 +156,7 @@ def actual_rate(k_c, file_reaction_coeffs):
             elif (rovnice[0] == "ambi_dif"):
                 index += 1
                 continue                                         
-            elif (rovnice[0] == "difuze"):
+            elif (rovnice[0] == "diffusion_ar"):
                 index += 1
                 continue               
             else:
@@ -220,12 +220,18 @@ def create_ODE(t, concentration, k_c, Z, REACT, pomoc, speci, Eloss, maxwell, El
         TeeV = concentration[-1]
 
         if (TeeV != Te_last_coeffs):
-                RC.read_file(file_reaction_data, file_Edist, file_reaction_coeffs, TeK, maxwell)
-                k_c = actual_rate(k_c, file_reaction_coeffs)
-                Te_last_coeffs = TeeV
+            rlist = RC.load_reaction_data(file_reaction_data)
+            if not maxwell:
+                EEDF = N.loadtxt(file_Edist)
+            else:
+                EEDF = None
+            RC.print_reaction_coeffs_file(rlist, RC.State(Tn, Te, EEDF), file_reaction_coeffs)
+            #RC.read_file(file_reaction_data, file_Edist, file_reaction_coeffs, TeK, maxwell)
+            k_c = actual_rate(k_c, file_reaction_coeffs)
+            Te_last_coeffs = TeeV
 
     # calculate effective rate coefficients (dependent on concentrations)
-    for r in R_special["difuze"]:
+    for r in R_special["diffusion_ar"]:
         k_c[r[0]] = difuze(difu, concentration[pomoc["He"]], r[1])
     for r in R_special["ambi_dif"]:
         # calculate the loss rate due to ambipolar diffusion
