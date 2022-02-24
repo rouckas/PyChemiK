@@ -260,7 +260,14 @@ def solve_ODE(t1, dt, file_species, file_reaction_data, file_Edist, file_reactio
     
     # integrate the reaction rate coeffs and save if needed
     if file_reaction_data != None:
-        RC.read_file(file_reaction_data, file_Edist, file_reaction_coeffs, Te, maxwell)
+        rlist = RC.load_reaction_data(file_reaction_data)
+        if not maxwell:
+            EEDF = N.loadtxt(file_Edist)
+        else:
+            EEDF = None
+        RC.print_reaction_coeffs_file(rlist, RC.State(Tn, Te, EEDF), file_reaction_coeffs)
+        #
+        #RC.read_file(file_reaction_data, file_Edist, file_reaction_coeffs, Te, maxwell)
 
     # load the saved reaction rate coeffs
     k_c, REACT, Z, Eloss, Elastic, R_special = load_reactions(file_reaction_coeffs, pomoc, speci)
