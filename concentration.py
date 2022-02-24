@@ -225,16 +225,16 @@ def create_ODE(t, concentration, k_c, Z, REACT, pomoc, speci, Eloss, maxwell, El
                 Te_last_coeffs = TeeV
 
     # calculate effective rate coefficients (dependent on concentrations)
-    for d in R_special["difuze"]:
-        k_c[d[0]] = difuze(difu, concentration[pomoc["He"]], d[1])
-    for a in R_special["ambi_dif"]:
+    for r in R_special["difuze"]:
+        k_c[r[0]] = difuze(difu, concentration[pomoc["He"]], r[1])
+    for r in R_special["ambi_dif"]:
         # calculate the loss rate due to ambipolar diffusion
         # This is not correct if the diffusion coefficients of different ions and significantly different
         # It is rough approximation, calculation of spatial distribution would be needed for accuracy.
-        k_c[a[0]] = ambi_dif(rate_langevin(a[1]) , concentration[pomoc["He"]], a[1], concentration[-1] * Q0 / k_b)
+        k_c[r[0]] = ambi_dif(rate_langevin(r[1]) , concentration[pomoc["He"]], r[1], concentration[-1] * Q0 / k_b)
     rate_st = Stevefelt_formula(concentration[pomoc["e-"]], concentration[-1] * Q0 / k_b)
-    for S in R_special["Stevefelt"]:
-        k_c[S] = rate_st
+    for r in R_special["Stevefelt"]:
+        k_c[r[0]] = rate_st
 
 
     # calculate the vector of reaction rates
