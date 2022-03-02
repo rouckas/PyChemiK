@@ -153,7 +153,7 @@ class Reaction:
 
         if self.k_type == "k_arrh":  # function of Tg
             k0, Ta = self.k_arrh
-            return k0*np.exp(-state.Tg/Ta)
+            return k0*np.exp(-Ta/state.Tg)
 
         if self.k_type == "CS":       # function of EEDF or Te
             return rate_coef(state.EEDF, self.CS, state.Te, maxwell = state.EEDF is None)
@@ -254,6 +254,10 @@ def load_reaction_data(fname):
 
             elif toks[0] == "k_hydhel":
                 reaction["k_hydhel"] = list(map(float, toks[1:]))
+                continue
+
+            elif toks[0] == "k_arrh":
+                reaction["k_arrh"] = list(map(float, toks[1:3]))
                 continue
 
             elif toks[0] == "type":
