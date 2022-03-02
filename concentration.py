@@ -12,33 +12,38 @@ class Prvky:
         self.mass = mass
         self.radii = radii
         
-class Rovnice:
-    def __init__(self, electron = False, k_c = 0, Eloss = 0):
-        self.electron = electron
-        self.k_c = k_c
-        self.Eloss = Eloss
-        #self.reakce = reakce
-  
 def load_species(fname):
     species = open(fname,"r")
     species_list = []	
-    species_numbers = {}
+    species_dict = {}
     index = 0			
     for line in species:
         line = line.partition("#")[0]
         try:
             name, init_conc, mass, radii = line.split()
             species_list.append(Prvky(name, float(init_conc), float(mass), float(radii)))
-            species_numbers[name] = len(species_list)-1
+            species_dict[name] = len(species_list)-1
         except: continue
     species.close()
-    return species_list, species_numbers
+    return species_list, species_dict
         
-def load_reactions(fname, specdict, speclist):
+def calculate_k(rlist, state):
+    """
+    Returns:
+        k_c[i]: list of reaction rate coefficients
+    """
+    k_c = N.zeros((len(rlist),))
+    for i, r in enumerate(rlist):
+        k = r.k(state)
+        if k is not None:
+            k_c[i] = k
+
+    return k_c
+
+def analyze_reaction_network(rlist, specdict, speclist):
     """load the list of reactions from file 'fname'
 
     Returns:
-        k_c[i]: list of reaction rate coefficients
         REACT[i, j]: matrix(#reactions, #species), sparse matrix that specifies
             the reactants of each species. If REACT[i, j] == N, then N molecules of
             species j participate as reactants in reaction j (typically, N=0 or 1).
@@ -53,59 +58,27 @@ def load_reactions(fname, specdict, speclist):
             R_special["ambi_dif"][0] = [i, m], where i is and index of an effective
             ambipolar diffusion reaction and m is the mass of the ionic species
     """
-    reaction = open(fname,"r")
-    index = 0
-    k_c = []
-    REACT = []
-    PROD = []
+    REACT = N.zeros((len(rlist), len(specdict)), int)
+    PROD = N.zeros((len(rlist), len(specdict)), int)
     Eloss = []
     Elastic = []
     R_special = {"diffusion_ar":[], "ambi_dif":[], "Stevefelt":[]}
-    for line in reaction:             
-        try:
-            rovnice = line.split()
-            if len(rovnice) == 0: continue
+    for index, r in enumerate(rlist):
+        Eloss.append((-r.energy_change) if r.energy_change is not None else 0.)
 
-            if ("ENERGY LOSS = " in line):
-                E_L = re.search("ENERGY LOSS =\s+(\S+)", line).group(1)
-                Eloss.append(float(E_L))
-            else:
-                Eloss.append(0)
-                
-            try:
-                k = float(rovnice[0])
-            except:
-                R_type = rovnice[0]
-                record = (index, speclist[specdict[rovnice[1]]].mass)
-                R_special[R_type] = R_special.get(R_type, []) + [record]
-                k = 0
-            k_c.append(k)
+        if r.type in R_special.keys():
+            record = (index, speclist[specdict[r.reactants[0]]].mass)
+            R_special[r.type] = R_special.get(r.type, []) + [record]
 
-            rozdel = rovnice.index("=>")
-            pozn = rovnice.index("//")
-            reactant=(rovnice[1:rozdel])
-            product=(rovnice[rozdel+1:pozn])
-            REACTp = N.zeros(len(specdict),int)
-            PRODp = N.zeros(len(specdict),int)
-        except: continue
-        for i in range(len(reactant)):
-            if (REACTp[specdict[reactant[i]]] == 0):      # - zbytecna podminka .. ?
-                j = reactant.count(reactant[i])
-                REACTp[specdict[reactant[i]]] = j
-                if (i > 0):
-                    if ("typ reakce = elastic" in line):
-                        Elastic.append([index, specdict[reactant[i]]])
-        REACT.append(REACTp)
-        for i in range(len(product)):
-            if (PRODp[specdict[product[i]]] == 0):      # - zbytecna podminka .. ?
-                j = product.count(product[i])
-                PRODp[specdict[product[i]]] = j
-        PROD.append(PRODp)             
-        index += 1
-    reaction.close()
-    k_c = N.array(k_c)
-    REACT = N.array(REACT)
-    PROD = N.array(PROD)
+        if r.type == "elastic":
+            Elastic.append([index, specdict[r.reactants[1]]])
+
+        for re in r.reactants:
+            REACT[index, specdict[re]] += 1
+
+        for pr in r.products:
+            PROD[index, specdict[pr]] += 1
+
     Z = PROD - REACT
     REACT = sp.csr_matrix(REACT)
     Eloss = N.array(Eloss)
@@ -113,7 +86,7 @@ def load_reactions(fname, specdict, speclist):
     Z = N.transpose(Z)      
     Z = sp.csr_matrix(Z)                    
 
-    return k_c, REACT, Z, Eloss, Elastic, R_special
+    return REACT, Z, Eloss, Elastic, R_special
     
     
 def difuze(d, con, mass): 
@@ -144,28 +117,6 @@ def Q_elastic(Te, nn, Mn, Me, rate):
     tau = 1/(nn * rate)    
     tau_cool = tau * Mn * AMU/(2*Me)
     return 1.5  * k_b * (Tn - Te) / tau_cool 
-
-def actual_rate(k_c, file_reaction_coeffs):
-    reaction = open(file_reaction_coeffs,"r")
-    index = 0
-    for line in reaction:             
-            rovnice = line.split()
-            if (rovnice[0] == "Stevefelt"):
-                index += 1
-                continue
-            elif (rovnice[0] == "ambi_dif"):
-                index += 1
-                continue                                         
-            elif (rovnice[0] == "diffusion_ar"):
-                index += 1
-                continue               
-            else:
-                try:
-                    k_c[index] = (float(rovnice[0]))
-                    index += 1                    
-                except: 
-                    continue
-    return k_c
 
 # CRR ternary recombination rate
 def K_CRR(Te, CRR_factor):
@@ -208,7 +159,7 @@ def calculate_E_loss(Te, f, concentration, k_c, pomoc, speci, Eloss, Elastic):
     return E_loss
 
 
-def create_ODE(t, concentration, k_c, Z, REACT, pomoc, speci, Eloss, maxwell, Elastic, R_special):
+def create_ODE(t, concentration, rlist, k_c, Z, REACT, pomoc, speci, Eloss, maxwell, Elastic, R_special):
     # sestaveni rovnice pro resic lsoda; nevyzaduje vypocet jakobianu 
 
     global Te_last_coeffs
@@ -220,14 +171,11 @@ def create_ODE(t, concentration, k_c, Z, REACT, pomoc, speci, Eloss, maxwell, El
         TeeV = concentration[-1]
 
         if (TeeV != Te_last_coeffs):
-            rlist = RC.load_reaction_data(file_reaction_data)
             if not maxwell:
                 EEDF = N.loadtxt(file_Edist)
             else:
                 EEDF = None
-            RC.print_reaction_coeffs_file(rlist, RC.State(Tn, TeK, EEDF), file_reaction_coeffs)
-            #RC.read_file(file_reaction_data, file_Edist, file_reaction_coeffs, TeK, maxwell)
-            k_c = actual_rate(k_c, file_reaction_coeffs)
+            k_c = calculate_k(rlist, RC.State(Tn, TeK, EEDF))
             Te_last_coeffs = TeeV
 
     # calculate effective rate coefficients (dependent on concentrations)
@@ -264,19 +212,20 @@ def solve_ODE(t1, dt, file_species, file_reaction_data, file_Edist, file_reactio
 
     speci, pomoc = load_species(file_species)
     
+    if not maxwell:
+        EEDF = N.loadtxt(file_Edist)
+    else:
+        EEDF = None
+
     # integrate the reaction rate coeffs and save if needed
     if file_reaction_data != None:
         rlist = RC.load_reaction_data(file_reaction_data)
-        if not maxwell:
-            EEDF = N.loadtxt(file_Edist)
-        else:
-            EEDF = None
-        RC.print_reaction_coeffs_file(rlist, RC.State(Tn, Te, EEDF), file_reaction_coeffs)
-        #
-        #RC.read_file(file_reaction_data, file_Edist, file_reaction_coeffs, Te, maxwell)
+    else:
+        rlist = RC.load_reaction_data_simple(file_reaction_coeffs)
 
     # load the saved reaction rate coeffs
-    k_c, REACT, Z, Eloss, Elastic, R_special = load_reactions(file_reaction_coeffs, pomoc, speci)
+    REACT, Z, Eloss, Elastic, R_special = analyze_reaction_network(rlist, pomoc, speci)
+    k_c = calculate_k(rlist, RC.State(Tn, Te, EEDF))
 
     t0 = 0
     y0 = N.array([s.conc for s in speci] + [Te * k_b / Q0])
@@ -288,11 +237,12 @@ def solve_ODE(t1, dt, file_species, file_reaction_data, file_Edist, file_reactio
     global Te_last
     Te_last_coeffs = y0[-1]
     Te_last = y0[-1]
-    r = ode(create_ODE).set_integrator('lsoda')
+    #r = ode(create_ODE).set_integrator('lsoda', atol=1e-3)
+    r = ode(create_ODE).set_integrator('vode', method='bdf', atol=1e-2)
     stopni = 0
 
-    create_ODE(1.27e-22, y0, k_c, Z, REACT, pomoc, speci, Eloss, maxwell, Elastic, R_special)
-    r.set_initial_value(y0, t0).set_f_params(k_c, Z, REACT, pomoc, speci, Eloss, maxwell, Elastic, R_special)
+    create_ODE(1.27e-22, y0, rlist, k_c, Z, REACT, pomoc, speci, Eloss, maxwell, Elastic, R_special)
+    r.set_initial_value(y0, t0).set_f_params(rlist, k_c, Z, REACT, pomoc, speci, Eloss, maxwell, Elastic, R_special)
     while r.successful() and r.t < t1:
         try:
             r.integrate(r.t+dt)
@@ -371,7 +321,7 @@ for i in range(len(speci)):
 
 print(Te)
 time_step = 1e-6
-time = 1e-4
+time = 1e-5
 concentrations, cas, vyvoj, speci, Te = solve_ODE(time, time_step, file_species, file_reaction_data, None, file_reaction_coeffs, Te, True)
 
 for i in range(len(speci)):
@@ -379,7 +329,6 @@ for i in range(len(speci)):
 
 import matplotlib.pyplot as plt
 f, ax = plt.subplots()
-print(vyvoj)
 for i in range(len(speci)):
     ax.plot(cas, vyvoj[:,i], label=speci[i].name)
     ax.set_yscale("log")
