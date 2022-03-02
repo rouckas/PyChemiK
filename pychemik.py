@@ -4,6 +4,24 @@ from scipy.integrate import ode
 import re
 import rate_coef as RC
 
+##############################
+##### physical constants #####
+##############################
+from scipy.constants import Boltzmann, elementary_charge, epsilon_0, physical_constants
+Q0 = elementary_charge
+k_b = Boltzmann
+AMU = physical_constants["atomic mass constant"][0]
+DE_CRR = 0.13#*1.6e-19
+CRR_factor = 3.8e-9
+
+
+
+# Helium atomic mass
+ram_He = 4.0026
+
+# neutral elastic collision rate coeff
+difu = 1.26076522957e-12
+
 
 class Prvky:
     def __init__(self, name = 0, conc = 0, mass = 0, radii = 0):
@@ -89,7 +107,7 @@ def analyze_reaction_network(rlist, specdict, speclist):
     return REACT, Z, Eloss, Elastic, R_special
     
     
-def difuze(d, con, mass): 
+def difuze(d, con, mass, l, Tn): 
     nu = d * con 
     Di = k_b*Tn / (mass*AMU*nu)
     tau = l/Di
@@ -102,7 +120,7 @@ def rate_langevin(mass):
     rate = elementary_charge / (2*epsilon_0) * (alpha / reduced_mass)**0.5
     return rate * 1e6 # cm^3 s^-1
     
-def ambi_dif(rate, con, mass, Te):
+def ambi_dif(rate, con, mass, l, Tn, Te):
     nu = rate * con #* c2
     Di = k_b*Tn / (AMU * mass*nu)
     D_a = Di * (1 + Te/Tn)
@@ -113,7 +131,7 @@ def ambi_dif(rate, con, mass, Te):
 def Stevefelt_formula(conc, Te):
     return (3.8e-9)*(Te**(-4.5))*conc + (1.55e-10) * (Te**(-0.63)) + (6e-9) * (Te**(-2.18))*(conc**(0.37))
 
-def Q_elastic(Te, nn, Mn, Me, rate):  
+def Q_elastic(Tn, Te, nn, Mn, Me, rate):  
     tau = 1/(nn * rate)    
     tau_cool = tau * Mn * AMU/(2*Me)
     return 1.5  * k_b * (Tn - Te) / tau_cool 
@@ -123,17 +141,17 @@ def K_CRR(Te, CRR_factor):
     return CRR_factor*Te**(-4.5) *1e-12     # [m^6/s] ... prevod na cm -> *1e12
 
 # cooling by coulombic collisions with H3+
-def Q_ei_coulombic(Te, n, nn, mass):
+def Q_ei_coulombic(Tn, Te, n, nn, mass):
     TeeV = k_b*Te/Q0
     Lambda_ei = 23 - N.log((n)**0.5*TeeV**(-3/2.0))
     nu_ei_cool_NRL = 3.2e-9*Lambda_ei/(mass*TeeV**1.5)*n
     return 1.5*k_b*nu_ei_cool_NRL*(Tn - Te)/Q0
     
     
-def calculate_E_loss(Te, f, concentration, k_c, pomoc, speci, Eloss, Elastic):
+def calculate_E_loss(Tn, Te, f, concentration, k_c, pomoc, speci, Eloss, Elastic):
     Eloss_Ela = []
     for i in range(len(Elastic)):
-        Eloss_Ela.append(Q_elastic(Te, concentration[Elastic[i][1]], speci[Elastic[i][1]].mass, speci[pomoc["e-"]].mass, k_c[Elastic[i][0]])  )
+        Eloss_Ela.append(Q_elastic(Tn, Te, concentration[Elastic[i][1]], speci[Elastic[i][1]].mass, speci[pomoc["e-"]].mass, k_c[Elastic[i][0]])  )
 
     Eloss_Ela = N.array(Eloss_Ela)
     Eloss_Ela = sum(Eloss_Ela)
@@ -144,14 +162,14 @@ def calculate_E_loss(Te, f, concentration, k_c, pomoc, speci, Eloss, Elastic):
     Eloss_Ela = Eloss_Ela/Q0
 
     coulombic =\
-            Q_ei_coulombic(Te, concentration[pomoc["e-"]],concentration[pomoc["H3+"]], speci[pomoc["H3+"]].mass)\
-            + Q_ei_coulombic(Te, concentration[pomoc["e-"]],concentration[pomoc["H+"]], speci[pomoc["H+"]].mass)\
-            + Q_ei_coulombic(Te, concentration[pomoc["e-"]],concentration[pomoc["H2+"]],speci[pomoc["H2+"]].mass)\
-            + Q_ei_coulombic(Te, concentration[pomoc["e-"]],concentration[pomoc["He+"]], speci[pomoc["He+"]].mass)\
-            + Q_ei_coulombic(Te, concentration[pomoc["e-"]],concentration[pomoc["He2+"]], speci[pomoc["He2+"]].mass)\
-            + Q_ei_coulombic(Te, concentration[pomoc["e-"]],concentration[pomoc["Ar+"]], speci[pomoc["Ar+"]].mass)\
-            + Q_ei_coulombic(Te, concentration[pomoc["e-"]],concentration[pomoc["ArH+"]], speci[pomoc["ArH+"]].mass)\
-            + Q_ei_coulombic(Te, concentration[pomoc["e-"]],concentration[pomoc["HeH+"]], speci[pomoc["HeH+"]].mass)\
+            Q_ei_coulombic(Tn, Te, concentration[pomoc["e-"]],concentration[pomoc["H3+"]], speci[pomoc["H3+"]].mass)\
+            + Q_ei_coulombic(Tn, Te, concentration[pomoc["e-"]],concentration[pomoc["H+"]], speci[pomoc["H+"]].mass)\
+            + Q_ei_coulombic(Tn, Te, concentration[pomoc["e-"]],concentration[pomoc["H2+"]],speci[pomoc["H2+"]].mass)\
+            + Q_ei_coulombic(Tn, Te, concentration[pomoc["e-"]],concentration[pomoc["He+"]], speci[pomoc["He+"]].mass)\
+            + Q_ei_coulombic(Tn, Te, concentration[pomoc["e-"]],concentration[pomoc["He2+"]], speci[pomoc["He2+"]].mass)\
+            + Q_ei_coulombic(Tn, Te, concentration[pomoc["e-"]],concentration[pomoc["Ar+"]], speci[pomoc["Ar+"]].mass)\
+            + Q_ei_coulombic(Tn, Te, concentration[pomoc["e-"]],concentration[pomoc["ArH+"]], speci[pomoc["ArH+"]].mass)\
+            + Q_ei_coulombic(Tn, Te, concentration[pomoc["e-"]],concentration[pomoc["HeH+"]], speci[pomoc["HeH+"]].mass)\
 
     E_loss = E_loss + Eloss_Ela #+ CRR
 
@@ -159,7 +177,7 @@ def calculate_E_loss(Te, f, concentration, k_c, pomoc, speci, Eloss, Elastic):
     return E_loss
 
 
-def create_ODE(t, concentration, rlist, k_c, Z, REACT, pomoc, speci, Eloss, maxwell, Elastic, R_special):
+def create_ODE(t, concentration, rlist, k_c, Z, REACT, pomoc, speci, Eloss, maxwell, Elastic, R_special, l, Tn):
     # sestaveni rovnice pro resic lsoda; nevyzaduje vypocet jakobianu 
 
     global Te_last_coeffs
@@ -180,12 +198,12 @@ def create_ODE(t, concentration, rlist, k_c, Z, REACT, pomoc, speci, Eloss, maxw
 
     # calculate effective rate coefficients (dependent on concentrations)
     for r in R_special["diffusion_ar"]:
-        k_c[r[0]] = difuze(difu, concentration[pomoc["He"]], r[1])
+        k_c[r[0]] = difuze(difu, concentration[pomoc["He"]], r[1], l, Tn)
     for r in R_special["ambi_dif"]:
         # calculate the loss rate due to ambipolar diffusion
         # This is not correct if the diffusion coefficients of different ions and significantly different
         # It is rough approximation, calculation of spatial distribution would be needed for accuracy.
-        k_c[r[0]] = ambi_dif(rate_langevin(r[1]) , concentration[pomoc["He"]], r[1], concentration[-1] * Q0 / k_b)
+        k_c[r[0]] = ambi_dif(rate_langevin(r[1]) , concentration[pomoc["He"]], r[1], l, Tn, concentration[-1] * Q0 / k_b)
     rate_st = Stevefelt_formula(concentration[pomoc["e-"]], concentration[-1] * Q0 / k_b)
     for r in R_special["Stevefelt"]:
         k_c[r[0]] = rate_st
@@ -196,7 +214,7 @@ def create_ODE(t, concentration, rlist, k_c, Z, REACT, pomoc, speci, Eloss, maxw
     f = N.exp(REACT * N.log(concentration[:-1])) * k_c
 
     if maxwell:
-        E_loss = calculate_E_loss(TeK, f, concentration, k_c, pomoc, speci, Eloss, Elastic)
+        E_loss = calculate_E_loss(Tn, TeK, f, concentration, k_c, pomoc, speci, Eloss, Elastic)
     else:
         E_loss = 0
     global vibr_T
@@ -208,7 +226,7 @@ def create_ODE(t, concentration, rlist, k_c, Z, REACT, pomoc, speci, Eloss, maxw
     return f
    
     
-def solve_ODE(t1, dt, file_species, file_reaction_data, file_Edist, file_reaction_coeffs, Te, maxwell):
+def solve_ODE(t1, dt, file_species, file_reaction_data, file_Edist, file_reaction_coeffs, l, Tn, Te, maxwell):
 
     speci, pomoc = load_species(file_species)
     
@@ -241,8 +259,8 @@ def solve_ODE(t1, dt, file_species, file_reaction_data, file_Edist, file_reactio
     r = ode(create_ODE).set_integrator('vode', method='bdf', atol=1e-2)
     stopni = 0
 
-    create_ODE(1.27e-22, y0, rlist, k_c, Z, REACT, pomoc, speci, Eloss, maxwell, Elastic, R_special)
-    r.set_initial_value(y0, t0).set_f_params(rlist, k_c, Z, REACT, pomoc, speci, Eloss, maxwell, Elastic, R_special)
+    create_ODE(1.27e-22, y0, rlist, k_c, Z, REACT, pomoc, speci, Eloss, maxwell, Elastic, R_special, l, Tn)
+    r.set_initial_value(y0, t0).set_f_params(rlist, k_c, Z, REACT, pomoc, speci, Eloss, maxwell, Elastic, R_special, l, Tn)
     while r.successful() and r.t < t1:
         try:
             r.integrate(r.t+dt)
@@ -277,59 +295,3 @@ Te_last_coeffs = 1.73
 Te_last = 1.73
 conc_srov = 0
 
-##############################
-##### physical constants #####
-##############################
-from scipy.constants import Boltzmann, elementary_charge, epsilon_0, physical_constants
-Q0 = elementary_charge
-k_b = Boltzmann
-AMU = physical_constants["atomic mass constant"][0]
-DE_CRR = 0.13#*1.6e-19
-CRR_factor = 3.8e-9
-
-# Helium atomic mass
-ram_He = 4.0026
-
-# neutral elastic collision rate coeff
-difu = 1.26076522957e-12
-
-##############################
-###### input files ###########
-##############################
-#soubor_rozdel = "data/collisions/eedf_He_H2_14Td_300K.txt"
-#soubor_rozdel = "data/collisions/eedf_He_H2_14Td_77K.txt"
-file_Edist = "data/collisions/elendif/eedf_He_H2_14Td_100_1000.txt" # electron energy distribution function
-file_species = "data/species.txt"       # definition of species with initial concentrations
-file_reaction_data = "data/collisions/electron.txt"   # reactions + temperature dependent data + cross sections (optional, can be None)
-file_reaction_coeffs = "data/collisions/reaction.txt" # reactions with rate coefficients
-
-Tn = 77
-Te = 20000
-
-time = 20e-3
-time_step = time/10e2
-
-
-r = 7.5e-3
-l = (r/2.405)**2
-
-
-concentrations, cas, vyvoj, speci, Te = solve_ODE(time, time_step, file_species, file_reaction_data, file_Edist, file_reaction_coeffs, Te, False)
-
-for i in range(len(speci)):
-    print(speci[i].name, ": \t %e" % speci[i].conc)
-
-print(Te)
-time_step = 1e-6
-time = 1e-5
-concentrations, cas, vyvoj, speci, Te = solve_ODE(time, time_step, file_species, file_reaction_data, None, file_reaction_coeffs, Te, True)
-
-for i in range(len(speci)):
-    print(speci[i].name, ": \t %e" % speci[i].conc)
-
-import matplotlib.pyplot as plt
-f, ax = plt.subplots()
-for i in range(len(speci)):
-    ax.plot(cas, vyvoj[:,i], label=speci[i].name)
-    ax.set_yscale("log")
-plt.savefig("result.pdf")

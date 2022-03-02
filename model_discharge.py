@@ -1,9 +1,5 @@
-import numpy as N
-import scipy.sparse as sp
-from scipy.integrate import ode
-import re
-import rate_coef as RC
-
+import numpy as np
+import matplotlib.pyplot as plt
 from pychemik import solve_ODE
 
 ##############################
@@ -50,7 +46,7 @@ r = 7.5e-3
 l = (r/2.405)**2
 
 
-concentrations, cas, vyvoj, speci, Te = solve_ODE(time, time_step, file_species, file_reaction_data, file_Edist, file_reaction_coeffs, Te, False)
+concentrations, cas, vyvoj, speci, Te = solve_ODE(time, time_step, file_species, file_reaction_data, file_Edist, file_reaction_coeffs, l, Tn, Te, False)
 
 for i in range(len(speci)):
     print(speci[i].name, ": \t %e" % speci[i].conc)
@@ -58,12 +54,11 @@ for i in range(len(speci)):
 print(Te)
 time_step = 1e-6
 time = 1e-5
-concentrations, cas, vyvoj, speci, Te = solve_ODE(time, time_step, file_species, file_reaction_data, None, file_reaction_coeffs, Te, True)
+concentrations, cas, vyvoj, speci, Te = solve_ODE(time, time_step, file_species, file_reaction_data, None, file_reaction_coeffs, l, Tn, Te, True)
 
 for i in range(len(speci)):
     print(speci[i].name, ": \t %e" % speci[i].conc)
 
-import matplotlib.pyplot as plt
 f, ax = plt.subplots()
 for i in range(len(speci)):
     ax.plot(cas, vyvoj[:,i], label=speci[i].name)
