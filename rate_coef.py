@@ -174,6 +174,41 @@ class InverseReaction(Reaction):
         kforward = Reaction.k(self, state)*g*np.exp(self.energy_change*Q0/(K_B*state.Te))
         return kforward
 
+def load_reaction_data_simple(fname):
+    rlist = []
+
+    state = 1
+    """
+    state = 0: looking for data
+    state = 1: decoding reaction
+    state = 2: loading cross section
+    """
+    reaction = {}
+    inverse = False
+
+    f = open(fname)
+    for line in f:
+        line, _, comment = line.partition("#") # skip comments
+        toks = line.split()
+        if len(toks) == 0: continue
+
+        reaction = {}
+
+        try:
+            reaction["k"] = float(toks[0])
+        except:
+            reaction["reaction_type"] = toks[0]
+
+
+        arrow = toks.index("=>")
+        reaction["reactants"] = toks[1:arrow]
+        reaction["products"] = toks[arrow+1:]
+        reaction["comment"] = comment.strip()
+
+        rlist.append(Reaction(**reaction))
+
+    return rlist
+
 def load_reaction_data(fname):
     rlist = []
 
