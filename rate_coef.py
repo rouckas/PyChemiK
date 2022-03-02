@@ -107,8 +107,7 @@ class Reaction:
         self.type = reaction_type
         self.comment = comment
 
-        if energy_change is not None:
-            self.energy_change = energy_change
+        self.energy_change = energy_change
 
         self.k_type = None
         if k is not None:
