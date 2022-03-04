@@ -96,7 +96,10 @@ class State:
     def __init__(self, Tg, Te=None, EEDF=None):
         self.Tg = Tg
         self.Te = Te
-        self.EEDF = EEDF
+        if isinstance(EEDF, str):
+            self.EEDF = np.loadtxt(EEDF)
+        else:
+            self.EEDF = EEDF
 
 class Reaction:
     def __init__(self, reactants, products, 
