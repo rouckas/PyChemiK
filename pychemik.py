@@ -178,29 +178,28 @@ def calculate_E_loss(Tn, Te, f, concentration, k_c, pomoc, speci, Eloss, Elastic
     return E_loss
 
 
-def create_ODE(t, concentration, rlist, k_c, Z, REACT, pomoc, speci, Eloss, maxwell, Elastic, R_special, l, Tn):
+def create_ODE(t, concentration, rlist, k_c, Z, REACT, pomoc, speci, Eloss, Elastic, R_special, state):
     # sestaveni rovnice pro resic lsoda; nevyzaduje vypocet jakobianu 
 
     global Te_last_coeffs
-    global Te_last #2
 
-    if maxwell:
+    if state.electron_cooling:
         # recalculate coefficients if needed
         TeK =concentration[-1] * Q0 / k_b
         TeeV = concentration[-1]
 
         if (TeeV != Te_last_coeffs):
-            k_c = calculate_k(rlist, RC.State(Tn, TeK, None))
+            k_c = calculate_k(rlist, RC.State(state.Tg, TeK, None))
             Te_last_coeffs = TeeV
 
     # calculate effective rate coefficients (dependent on concentrations)
     for r in R_special["diffusion_ar"]:
-        k_c[r[0]] = difuze(difu, concentration[pomoc["He"]], r[1], l, Tn)
+        k_c[r[0]] = difuze(difu, concentration[pomoc["He"]], r[1], state.diffusion_length, state.Tg)
     for r in R_special["ambi_dif"]:
         # calculate the loss rate due to ambipolar diffusion
         # This is not correct if the diffusion coefficients of different ions and significantly different
         # It is rough approximation, calculation of spatial distribution would be needed for accuracy.
-        k_c[r[0]] = ambi_dif(rate_langevin(r[1]) , concentration[pomoc["He"]], r[1], l, Tn, concentration[-1] * Q0 / k_b)
+        k_c[r[0]] = ambi_dif(rate_langevin(r[1]) , concentration[pomoc["He"]], r[1], state.diffusion_length, state.Tg, concentration[-1] * Q0 / k_b)
     rate_st = Stevefelt_formula(concentration[pomoc["e-"]], concentration[-1] * Q0 / k_b)
     for r in R_special["Stevefelt"]:
         k_c[r[0]] = rate_st
@@ -210,22 +209,19 @@ def create_ODE(t, concentration, rlist, k_c, Z, REACT, pomoc, speci, Eloss, maxw
     concentration[concentration < 1e-12] = 0
     f = N.exp(REACT * N.log(concentration[:-1])) * k_c
 
-    if maxwell:
-        E_loss = calculate_E_loss(Tn, TeK, f, concentration, k_c, pomoc, speci, Eloss, Elastic)
+    if state.electron_cooling:
+        E_loss = calculate_E_loss(state.Tg, TeK, f, concentration, k_c, pomoc, speci, Eloss, Elastic)
     else:
         E_loss = 0
-    global vibr_T
 
     f = Z * f 
     f = N.hstack((f, E_loss))
 
-    Te_last = concentration[-1]
     return f
    
     
 def solve_ODE(t1, dt, species_list, reaction_list, state):
 
-    #species_list, pomoc = load_species(file_species)
     species_dict = {s.name:i for i, s in enumerate(species_list)}
 
     # load the saved reaction rate coeffs
@@ -234,21 +230,18 @@ def solve_ODE(t1, dt, species_list, reaction_list, state):
 
     t0 = 0
     y0 = N.array([s.conc for s in species_list] + [state.Te * k_b / Q0])
-    print(y0)
 
     vyvoj = [y0]
     cas = [0]   
     global conc_srov
     global Te_last_coeffs
-    global Te_last
     Te_last_coeffs = y0[-1]
-    Te_last = y0[-1]
     #r = ode(create_ODE).set_integrator('lsoda', atol=1e-3)
     r = ode(create_ODE).set_integrator('vode', method='bdf', atol=1e-2)
     stopni = 0
 
-    create_ODE(1.27e-22, y0, reaction_list, k_c, Z, REACT, species_dict, species_list, Eloss, state.electron_cooling, Elastic, R_special, state.diffusion_length, state.Tg)
-    r.set_initial_value(y0, t0).set_f_params(reaction_list, k_c, Z, REACT, species_dict, species_list, Eloss, state.electron_cooling, Elastic, R_special, state.diffusion_length, state.Tg)
+    create_ODE(1.27e-22, y0, reaction_list, k_c, Z, REACT, species_dict, species_list, Eloss, Elastic, R_special, state)
+    r.set_initial_value(y0, t0).set_f_params(reaction_list, k_c, Z, REACT, species_dict, species_list, Eloss, Elastic, R_special, state)
     while r.successful() and r.t < t1:
         try:
             r.integrate(r.t+dt)
@@ -280,6 +273,5 @@ def solve_ODE(t1, dt, species_list, reaction_list, state):
 ##### global variables #######
 ##############################
 Te_last_coeffs = 1.73
-Te_last = 1.73
 conc_srov = 0
 
