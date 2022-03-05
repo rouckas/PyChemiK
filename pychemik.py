@@ -223,22 +223,18 @@ def create_ODE(t, concentration, rlist, k_c, Z, REACT, pomoc, speci, Eloss, maxw
     return f
    
     
-def solve_ODE(t1, dt, file_species, file_reaction_data, file_Edist, file_reaction_coeffs, state):
+def solve_ODE(t1, dt, species_list, reaction_list, state):
 
-    speci, pomoc = load_species(file_species)
-
-    # integrate the reaction rate coeffs and save if needed
-    if file_reaction_data != None:
-        rlist = RC.load_reaction_data(file_reaction_data)
-    else:
-        rlist = RC.load_reaction_data_simple(file_reaction_coeffs)
+    #species_list, pomoc = load_species(file_species)
+    species_dict = {s.name:i for i, s in enumerate(species_list)}
 
     # load the saved reaction rate coeffs
-    REACT, Z, Eloss, Elastic, R_special = analyze_reaction_network(rlist, pomoc, speci)
-    k_c = calculate_k(rlist, state)
+    REACT, Z, Eloss, Elastic, R_special = analyze_reaction_network(reaction_list, species_dict, species_list)
+    k_c = calculate_k(reaction_list, state)
 
     t0 = 0
-    y0 = N.array([s.conc for s in speci] + [state.Te * k_b / Q0])
+    y0 = N.array([s.conc for s in species_list] + [state.Te * k_b / Q0])
+    print(y0)
 
     vyvoj = [y0]
     cas = [0]   
@@ -251,8 +247,8 @@ def solve_ODE(t1, dt, file_species, file_reaction_data, file_Edist, file_reactio
     r = ode(create_ODE).set_integrator('vode', method='bdf', atol=1e-2)
     stopni = 0
 
-    create_ODE(1.27e-22, y0, rlist, k_c, Z, REACT, pomoc, speci, Eloss, state.electron_cooling, Elastic, R_special, state.diffusion_length, state.Tg)
-    r.set_initial_value(y0, t0).set_f_params(rlist, k_c, Z, REACT, pomoc, speci, Eloss, state.electron_cooling, Elastic, R_special, state.diffusion_length, state.Tg)
+    create_ODE(1.27e-22, y0, reaction_list, k_c, Z, REACT, species_dict, species_list, Eloss, state.electron_cooling, Elastic, R_special, state.diffusion_length, state.Tg)
+    r.set_initial_value(y0, t0).set_f_params(reaction_list, k_c, Z, REACT, species_dict, species_list, Eloss, state.electron_cooling, Elastic, R_special, state.diffusion_length, state.Tg)
     while r.successful() and r.t < t1:
         try:
             r.integrate(r.t+dt)
@@ -273,12 +269,12 @@ def solve_ODE(t1, dt, file_species, file_reaction_data, file_Edist, file_reactio
     vyvoj = N.array(vyvoj)
     cas = N.array(cas)
 
-    for i in range(len(speci)):
-        speci[i].conc = r.y[i]
+    for i in range(len(species_list)):
+        species_list[i].conc = r.y[i]
     print(r.y[-1] * Q0 / k_b, r.y[-1])
     Te =r.y[-1] * Q0 / k_b
 
-    return r, cas, vyvoj, speci, Te
+    return r, cas, vyvoj, species_list, Te
 
 ##############################
 ##### global variables #######
