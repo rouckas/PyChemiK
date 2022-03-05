@@ -189,11 +189,7 @@ def create_ODE(t, concentration, rlist, k_c, Z, REACT, pomoc, speci, Eloss, maxw
         TeeV = concentration[-1]
 
         if (TeeV != Te_last_coeffs):
-            if not maxwell:
-                EEDF = N.loadtxt(file_Edist)
-            else:
-                EEDF = None
-            k_c = calculate_k(rlist, RC.State(Tn, TeK, EEDF))
+            k_c = calculate_k(rlist, RC.State(Tn, TeK, None))
             Te_last_coeffs = TeeV
 
     # calculate effective rate coefficients (dependent on concentrations)
@@ -229,11 +225,6 @@ def create_ODE(t, concentration, rlist, k_c, Z, REACT, pomoc, speci, Eloss, maxw
 def solve_ODE(t1, dt, file_species, file_reaction_data, file_Edist, file_reaction_coeffs, l, Tn, Te, maxwell):
 
     speci, pomoc = load_species(file_species)
-    
-    if not maxwell:
-        EEDF = N.loadtxt(file_Edist)
-    else:
-        EEDF = None
 
     # integrate the reaction rate coeffs and save if needed
     if file_reaction_data != None:
