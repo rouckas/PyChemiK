@@ -89,8 +89,10 @@ def CS_balance(rovnice,r_rate, T):
         
 
 def mxw_E(E,T,M=M_EL):   
+    if N.any(T < 0): raise(ValueError("Negative value of temperature not allowed"))
     E_max = T
-    return 2*pi*(N.sqrt(1/pi/E_max)**3)*N.sqrt(E)*N.exp(-E/E_max)
+    with N.errstate(under="ignore"):
+        return 2*pi*(N.sqrt(1/pi/E_max)**3)*N.sqrt(E)*N.exp(-E/E_max)
 
 class State:
     def __init__(self, Tg, Te=None, EEDF=None):
