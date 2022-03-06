@@ -192,6 +192,8 @@ def create_ODE(t, concentration, rlist, k_c, Z, REACT, pomoc, speci, Eloss, Elas
             k_c = calculate_k(rlist, RC.State(state.Tg, TeK, None))
             Te_last_coeffs = TeeV
 
+    concentration[concentration < 1e-12] = 0
+
     # calculate effective rate coefficients (dependent on concentrations)
     for r in R_special["diffusion_ar"]:
         k_c[r[0]] = difuze(difu, concentration[pomoc["He"]], r[1], state.diffusion_length, state.Tg)
@@ -206,8 +208,9 @@ def create_ODE(t, concentration, rlist, k_c, Z, REACT, pomoc, speci, Eloss, Elas
 
 
     # calculate the vector of reaction rates
-    concentration[concentration < 1e-12] = 0
-    f = N.exp(REACT * N.log(concentration[:-1])) * k_c
+    from numpy import errstate
+    with errstate(divide="ignore"):
+        f = N.exp(REACT * N.log(concentration[:-1])) * k_c
 
     if state.electron_cooling:
         E_loss = calculate_E_loss(state.Tg, TeK, f, concentration, k_c, pomoc, speci, Eloss, Elastic)

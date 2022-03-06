@@ -1,4 +1,5 @@
 import numpy as np
+np.seterr(invalid = "raise", divide = "raise", over = "raise", under = "ignore")
 import matplotlib.pyplot as plt
 from pychemik import solve_ODE, State, load_species
 from rate_coef import load_reaction_data
