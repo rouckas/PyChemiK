@@ -180,12 +180,6 @@ class InverseReaction(Reaction):
 def load_reaction_data_simple(fname):
     rlist = []
 
-    state = 1
-    """
-    state = 0: looking for data
-    state = 1: decoding reaction
-    state = 2: loading cross section
-    """
     reaction = {}
     inverse = False
 
@@ -212,12 +206,14 @@ def load_reaction_data_simple(fname):
 
     return rlist
 
-def load_reaction_data(fname):
+def load_reaction_data(fname, format="full"):
+    if format == "simple":
+        return load_reaction_data_simple(fname)
+
     rlist = []
 
     state = 1
     """
-    state = 0: looking for data
     state = 1: decoding reaction
     state = 2: loading cross section
     """
@@ -234,12 +230,9 @@ def load_reaction_data(fname):
             if toks[0] == "reaction":
                 if reaction != {}:
                     rlist.append(Reaction(**reaction))
-                    #print(rlist[-1], rlist[-1].k(State(77., 77., None)))
                     # save previous record
                     if inverse:
-                        #print("inverse")
                         rlist.append(InverseReaction(**reaction))
-                        #print(rlist[-1], rlist[-1].k(State(77., 77., None)))
                         inverse = False
                     pass
 
