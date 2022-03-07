@@ -1,0 +1,1238 @@
+//added from 3 Mar 2022: Rates at T = 50K
+// H system
+reaction		p-H3+	p-H2	=>	p-H3+	p-H2
+     k_arrh		1.89e-9 0.00
+
+reaction		p-H3+	p-H2	=>	p-H3+	o-H2
+	k_arrh		8.16e-10 164.9
+
+reaction		p-H3+	p-H2	=>	o-H3+	p-H2
+	k_arrh		0	0
+
+reaction		p-H3+	p-H2	=>	o-H3+	o-H2
+	k_arrh		5.88e-10	198.2
+
+
+
+reaction		p-H3+	o-H2	=>	p-H3+	p-H2
+	k_arrh		2.98e-10 -0.69
+
+reaction		p-H3+	o-H2	=>	p-H3+	o-H2
+	k_arrh		1.13e-9 -0.19
+
+reaction		p-H3+	o-H2	=>	o-H3+	p-H2
+	k_arrh		3.46e-10	-0.69
+
+reaction		p-H3+	o-H2	=>	o-H3+	o-H2
+	k_arrh		8.03e-10	32.6
+
+
+
+reaction		o-H3+	p-H2	=>	p-H3+	p-H2
+	k_arrh		0	0
+
+reaction		o-H3+	p-H2	=>	p-H3+	o-H2
+	k_arrh		1.50e-9	136.2
+
+reaction		o-H3+	p-H2	=>	o-H3+	p-H2
+	k_arrh		1.84e-9	-0.26
+
+reaction		o-H3+	p-H2	=>	o-H3+	o-H2
+	k_arrh		8.84e-9	170.0
+
+
+
+reaction		o-H3+	o-H2	=>	p-H3+	p-H2
+	k_arrh		1.04e-10	0.00
+
+reaction		o-H3+	o-H2	=>	p-H3+	o-H2
+	k_arrh		4.00e-10	-0.19
+
+reaction		o-H3+	o-H2	=>	o-H3+	p-H2
+	k_arrh		9.67e-11	-0.14
+
+reaction		o-H3+	o-H2	=>	o-H3+	o-H2
+	k_arrh		1.29e-9	0.07
+
+
+
+// H-1 system
+reaction		p-H3+	HD	=>	p-H3+	HD
+	k_arrh		1.55e-10	-1.05
+
+reaction		p-H3+	HD	=>	o-H3+	HD
+	k_arrh		5.71e-11	32.25
+
+reaction		p-H3+	HD	=>	p-H2D+	p-H2
+	k_arrh		3.11e-10	-0.71
+
+reaction		p-H3+	HD	=>	p-H2D+	o-H2
+	k_arrh		4.93e-10	0.95
+
+reaction		p-H3+	HD	=>	o-H2D+	p-H2
+	k_arrh		6.08e-10	-1.08
+
+reaction		p-H3+	HD	=>	o-H2D+	o-H2
+	k_arrh		5.71e-10	25.8
+
+
+
+reaction		o-H3+	HD	=>	p-H3+	HD
+	k_arrh		2.87e-11	-0.38
+
+reaction		o-H3+	HD	=>	o-H3+	HD
+	k_arrh		1.62e-10	-0.94
+
+reaction		o-H3+	HD	=>	p-H2D+	p-H2
+	k_arrh		0	0
+
+reaction		o-H3+	HD	=>	p-H2D+	o-H2
+	k_arrh		1.70e-10	-0.44
+
+reaction		o-H3+	HD	=>	o-H2D+	p-H2
+	k_arrh		2.22e-10	-0.47
+
+reaction		o-H3+	HD	=>	o-H2D+	o-H2
+	k_arrh		1.11e-9	0.35
+
+
+
+reaction		p-H2D+	p-H2	=>	p-H3+	HD
+	k_arrh		2.46e-10	226.5
+
+reaction		p-H2D+	p-H2	=>	o-H3+	HD
+	k_arrh		0	0
+
+reaction		p-H2D+	p-H2	=>	p-H2D+	p-H2
+	k_arrh		1.79e-9	-0.01
+
+reaction		p-H2D+	p-H2	=>	p-H2D+	o-H2
+	k_arrh		0	0
+
+reaction		p-H2D+	p-H2	=>	o-H2D+	p-H2
+	k_arrh		0	0
+
+reaction		p-H2D+	p-H2	=>	o-H2D+	o-H2
+	k_arrh		1.02e-9	256.1
+
+
+
+reaction		p-H2D+	o-H2	=>	p-H3+	HD
+	k_arrh		1.48e-10	58.8
+
+reaction		p-H2D+	o-H2	=>	o-H3+	HD
+	k_arrh		9.32e-9	94.6
+
+reaction		p-H2D+	o-H2	=>	p-H2D+	p-H2
+	k_arrh		0	0
+
+reaction		p-H2D+	o-H2	=>	p-H2D+	o-H2
+	k_arrh		5.29e-10	-0.18
+
+reaction		p-H2D+	o-H2	=>	o-H2D+	p-H2
+	k_arrh		1.26e-9	0.06
+
+reaction		p-H2D+	o-H2	=>	o-H2D+	o-H2
+	k_arrh		6.04e-10	88.8
+
+
+reaction		o-H2D+	p-H2	=>	p-H3+	HD
+	k_arrh		1.31e-10	140.4
+
+reaction		o-H2D+	p-H2	=>	o-H3+	HD
+	k_arrh		9.49e-11	178.9
+
+reaction		o-H2D+	p-H2	=>	p-H2D+	p-H2
+	k_arrh		0	0
+
+reaction		o-H2D+	p-H2	=>	p-H2D+	o-H2
+	k_arrh		5.58e-10	82.7
+
+reaction		o-H2D+	p-H2	=>	o-H2D+	p-H2
+	k_arrh		1.79e-9	-0.02
+
+reaction		o-H2D+	p-H2	=>	o-H2D+	o-H2
+	k_arrh		6.54e-10	174.0
+
+
+
+reaction		o-H2D+	o-H2	=>	p-H3+	HD
+	k_arrh		4.67e-11	-0.82
+
+reaction		o-H2D+	o-H2	=>	o-H3+	HD
+	k_arrh		1.64e-10	6.31
+
+reaction		o-H2D+	o-H2	=>	p-H2D+	p-H2
+	k_arrh		8.31e-11	-0.92
+
+reaction		o-H2D+	o-H2	=>	p-H2D+	o-H2
+	k_arrh		1.68e-10	-0.77
+
+reaction		o-H2D+	o-H2	=>	o-H2D+	p-H2
+	k_arrh		2.19e-10	-0.72
+
+reaction		o-H2D+	o-H2	=>	o-H2D+	o-H2
+	k_arrh		1.14e-9	-0.06
+
+
+
+// H-2 D system
+reaction		p-H3+	p-D2	=>	p-H3+	p-D2
+	k_arrh		2.21e-11	-0.20
+
+reaction		p-H3+	p-D2	=>	p-H3+	o-D2
+	k_arrh		0	0
+
+reaction		p-H3+	p-D2	=>	o-H3+	p-D2
+	k_arrh		0	0
+
+reaction		p-H3+	p-D2	=>	o-H3+	o-D2
+	k_arrh		0	0
+
+reaction		p-H3+	p-D2	=>	p-H2D+	HD
+	k_arrh		3.50e-9	-0.41
+
+reaction		p-H3+	p-D2	=>	o-H2D+	HD
+	k_arrh		5.08e-9	-0.08
+
+reaction		p-H3+	p-D2	=>	p-D2H+	p-H2
+	k_arrh		3.02e-10	-0.12
+
+reaction		p-H3+	p-D2	=>	p-D2H+	o-H2
+	k_arrh		4.08e-10	0.62
+
+reaction		p-H3+	p-D2	=>	o-D2H+	p-H2
+	k_arrh		0	0
+
+reaction		p-H3+	p-D2	=>	o-D2H+	o-H2
+	k_arrh		0	0
+
+
+
+reaction		p-H3+	o-D2	=>	p-H3+	p-D2
+	k_arrh		0	0
+
+reaction		p-H3+	o-D2	=>	p-H3+	o-D2
+	k_arrh		1.73e-11	-0.29
+
+reaction		p-H3+	o-D2	=>	o-H3+	p-D2
+	k_arrh		0	0
+
+reaction		p-H3+	o-D2	=>	o-H3+	o-D2
+	k_arrh		0	0
+
+reaction		p-H3+	o-D2	=>	p-H2D+	HD
+	k_arrh		3.06e-10	0.59
+
+reaction		p-H3+	o-D2	=>	o-H2D+	HD
+	k_arrh		2.42e-10	0.08
+
+reaction		p-H3+	o-D2	=>	p-D2H+	p-H2
+	k_arrh		0	0
+reaction		p-H3+	o-D2	=>	p-D2H+	o-H2
+	k_arrh		0	0
+
+reaction		p-H3+	o-D2	=>	o-D2H+	p-H2
+	k_arrh		4.81e-10	-0.42
+
+reaction		p-H3+	o-D2	=>	o-D2H+	o-H2
+	k_arrh		5.39e-10	0.06
+
+
+
+
+reaction		o-H3+	p-D2	=>	p-H3+	p-D2
+	k_arrh		0	0
+
+reaction		o-H3+	p-D2	=>	p-H3+	o-D2
+	k_arrh		0	0
+
+reaction		o-H3+	p-D2	=>	o-H3+	p-D2
+	k_arrh		3.14e-11	0.29
+
+reaction		o-H3+	p-D2	=>	o-H3+	o-D2
+	k_arrh		0	0
+
+reaction		o-H3+	p-D2	=>	p-H2D+	HD
+	k_arrh		0	0
+
+reaction		o-H3+	p-D2	=>	o-H2D+	HD
+	k_arrh		8.02e-10	0.09
+
+reaction		o-H3+	p-D2	=>	p-D2H+	p-H2
+	k_arrh		0	0
+
+reaction		o-H3+	p-D2	=>	p-D2H+	o-H2
+	k_arrh		7.50e-10	-0.10
+
+reaction		o-H3+	p-D2	=>	o-D2H+	p-H2
+	k_arrh		0	0
+
+reaction		o-H3+	p-D2	=>	o-D2H+	o-H2
+	k_arrh		0	0
+
+
+
+reaction		o-H3+	o-D2	=>	p-H3+	p-D2
+	k_arrh		0	0
+
+reaction		o-H3+	o-D2	=>	p-H3+	o-D2
+	k_arrh		0	0
+
+reaction		o-H3+	o-D2	=>	o-H3+	p-D2
+	k_arrh		0	0
+
+reaction		o-H3+	o-D2	=>	o-H3+	o-D2
+	k_arrh		2.38e-11	-0.63
+
+reaction		o-H3+	o-D2	=>	p-H2D+	HD
+	k_arrh		0	0
+
+reaction		o-H3+	o-D2	=>	o-H2D+	HD
+	k_arrh		5.59e-10	2.49
+
+reaction		o-H3+	o-D2	=>	p-D2H+	p-H2
+	k_arrh		0	0
+
+reaction		o-H3+	o-D2	=>	p-D2H+	o-H2
+	k_arrh		0	0
+
+reaction		o-H3+	o-D2	=>	o-D2H+	p-H2
+	k_arrh		0	0
+
+reaction		o-H3+	o-D2	=>	o-D2H+	o-H2
+	k_arrh		1.03e-9	-0.86
+
+
+
+reaction		p-H2D+	HD	=>	p-H3+	p-D2
+	k_arrh		7.83e-12	237.8
+
+reaction		p-H2D+	HD	=>	p-H3+	o-D2
+	k_arrh		9.48e-12	146.6
+
+reaction		p-H2D+	HD	=>	o-H3+	p-D2
+	k_arrh		0	0
+
+reaction		p-H2D+	HD	=>	o-H3+	o-D2
+	k_arrh		0	0
+
+reaction		p-H2D+	HD	=>	p-H2D+	HD
+	k_arrh		2.08e-10	-0.50
+
+reaction		p-H2D+	HD	=>	o-H2D+	HD
+	k_arrh		2.84e-10	88.5
+
+reaction		p-H2D+	HD	=>	p-D2H+	p-H2
+	k_arrh		4.12e-10	-0.50
+
+reaction		p-H2D+	HD	=>	p-D2H+	o-H2
+	k_arrh		1.89e-10	33.1
+
+reaction		p-H2D+	HD	=>	o-D2H+	p-H2
+	k_arrh		7.32e-10	0.30
+
+reaction		p-H2D+	HD	=>	o-D2H+	o-H2
+	k_arrh		1.93e-10	-0.64
+
+
+
+reaction		o-H2D+	HD	=>	p-H3+	p-D2
+	k_arrh		2.52e-12	150.1
+
+reaction		o-H2D+	HD	=>	p-H3+	o-D2
+	k_arrh		3.88e-12	65.1
+
+reaction		o-H2D+	HD	=>	o-H3+	p-D2
+	k_arrh		6.80e-12	181.7
+
+reaction		o-H2D+	HD	=>	o-H3+	o-D2
+	k_arrh		1.03e-10	96.8
+
+reaction		o-H2D+	HD	=>	p-H2D+	HD
+	k_arrh		8.64e-11	-0.38
+
+reaction		o-H2D+	HD	=>	o-H2D+	HD
+	k_arrh		4.66e-10	1.38
+
+reaction		o-H2D+	HD	=>	p-D2H+	p-H2
+	k_arrh		6.41e-11	0.22
+
+reaction		o-H2D+	HD	=>	p-D2H+	o-H2
+	k_arrh		3.02e-10	-0.60
+
+reaction		o-H2D+	HD	=>	o-D2H+	p-H2
+	k_arrh		1.49e-10	-0.9	
+
+reaction		o-H2D+	HD	=>	o-D2H+	o-H2
+	k_arrh		5.24e-10	-0.56
+
+
+
+reaction		p-D2H+	p-H2	=>	p-H3+	p-D2
+	k_arrh		2.02e-10	355.0
+
+reaction		p-D2H+	p-H2	=>	p-H3+	o-D2
+	k_arrh		0	0
+
+reaction		p-D2H+	p-H2	=>	o-H3+	p-D2
+	k_arrh		0	0
+
+reaction		p-D2H+	p-H2	=>	o-H3+	o-D2
+	k_arrh		0	0
+
+reaction		p-D2H+	p-H2	=>	p-H2D+	HD
+	k_arrh		3.26e-10	137.3
+
+reaction		p-D2H+	p-H2	=>	o-H2D+	HD
+	k_arrh		4.49e-10	231.4
+
+reaction		p-D2H+	p-H2	=>	p-D2H+	p-H2
+	k_arrh		1.73e-9	-0.01
+
+reaction		p-D2H+	p-H2	=>	p-D2H+	o-H2
+	k_arrh		7.09e-10	168.8
+
+reaction		p-D2H+	p-H2	=>	o-D2H+	p-H2
+	k_arrh		0	0
+
+reaction		p-D2H+	p-H2	=>	o-D2H+	o-H2
+	k_arrh		0	0
+
+
+
+reaction		p-D2H+	o-H2	=>	p-H3+	p-D2
+	k_arrh		0	0
+
+reaction		p-D2H+	o-H2	=>	p-H3+	o-D2
+	k_arrh		0	0
+
+reaction		p-D2H+	o-H2	=>	o-H3+	p-D2
+	k_arrh		2.65e-11	233.9
+
+reaction		p-D2H+	o-H2	=>	o-H3+	o-D2
+	k_arrh		0	0
+
+reaction		p-D2H+	o-H2	=>	p-H2D+	HD
+	k_arrh		7.33e-11	1.58
+
+reaction		p-D2H+	o-H2	=>	o-H2D+	HD
+	k_arrh		5.94e-10	54.6
+
+reaction		p-D2H+	o-H2	=>	p-D2H+	p-H2
+	k_arrh		2.84e-10	-0.58
+
+reaction		p-D2H+	o-H2	=>	p-D2H+	o-H2
+	k_arrh		1.35e-9	-0.10
+
+reaction		p-D2H+	o-H2	=>	o-D2H+	p-H2
+	k_arrh		0	0
+
+reaction		p-D2H+	o-H2	=>	o-D2H+	o-H2
+	k_arrh		0	0
+
+
+
+reaction		o-D2H+	p-H2	=>	p-H3+	p-D2
+	k_arrh		0	0
+
+reaction		o-D2H+	p-H2	=>	p-H3+	o-D2
+	k_arrh		1.56e-11	325.2
+
+reaction		o-D2H+	p-H2	=>	o-H3+	p-D2
+	k_arrh		0	0
+
+reaction		o-D2H+	p-H2	=>	o-H3+	o-D2
+	k_arrh		0	0
+
+reaction		o-D2H+	p-H2	=>	p-H2D+	HD
+	k_arrh		3.48e-10	193.6
+
+reaction		o-D2H+	p-H2	=>	o-H2D+	HD
+	k_arrh		4.61e-10	281.7
+
+reaction		o-D2H+	p-H2	=>	p-D2H+	p-H2
+	k_arrh		0	0
+
+reaction		o-D2H+	p-H2	=>	p-D2H+	o-H2
+	k_arrh		0	0
+
+reaction		o-D2H+	p-H2	=>	o-D2H+	p-H2
+	k_arrh		1.72e-9	-0.05
+
+reaction		o-D2H+	p-H2	=>	o-D2H+	o-H2
+	k_arrh		4.16e-10	171.1
+
+
+
+reaction		o-D2H+	o-H2	=>	p-H3+	p-D2
+	k_arrh		0	0
+
+reaction		o-D2H+	o-H2	=>	p-H3+	o-D2
+	k_arrh		8.35e-12	171.1
+
+reaction		o-D2H+	o-H2	=>	o-H3+	p-D2
+	k_arrh		0	0
+
+reaction		o-D2H+	o-H2	=>	o-H3+	o-D2
+	k_arrh		1.65e-11	194.6
+
+reaction		o-D2H+	o-H2	=>	p-H2D+	HD
+	k_arrh		8.15e-11	15.6
+
+reaction		o-D2H+	o-H2	=>	o-H2D+	HD
+	k_arrh		6.82e-10	103.4
+
+reaction		o-D2H+	o-H2	=>	p-D2H+	p-H2
+	k_arrh		0	0
+
+reaction		o-D2H+	o-H2	=>	p-D2H+	o-H2
+	k_arrh		0	0
+
+reaction		o-D2H+	o-H2	=>	o-D2H+	p-H2
+	k_arrh		4.17e-10	-0.36
+
+reaction		o-D2H+	o-H2	=>	o-D2H+	o-H2
+	k_arrh		1.27e-9	-0.08
+
+
+
+
+// H-3 D system
+reaction		p-H2D+	p-D2	=>	p-H2D+	p-D2
+	k_arrh		4.42e-11	-0.43
+
+reaction		p-H2D+	p-D2	=>	p-H2D+	o-D2
+	k_arrh		4.82e-11	-1.01
+
+reaction		p-H2D+	p-D2	=>	o-H2D+	p-D2
+	k_arrh		0	0
+
+reaction		p-H2D+	p-D2	=>	o-H2D+	o-D2
+	k_arrh		0	0
+
+reaction		p-H2D+	p-D2	=>	p-D2H+	HD
+	k_arrh		6.78e-10	-0.23
+
+reaction		p-H2D+	p-D2	=>	o-D2H+	HD
+	k_arrh		5.41e-10	0.85
+
+reaction		p-H2D+	p-D2	=>	p-D3+	p-H2
+	k_arrh		1.69e-11	-0.64
+
+reaction		p-H2D+	p-D2	=>	p-D3+	o-H2
+	k_arrh		0	0
+
+reaction		p-H2D+	p-D2	=>	m-D3+	p-H2
+	k_arrh		0	0
+
+reaction		p-H2D+	p-D2	=>	m-D3+	o-H2
+	k_arrh		0	0
+
+reaction		p-H2D+	p-D2	=>	o-D3+	p-H2
+	k_arrh		1.41e-10	-1.05
+
+reaction		p-H2D+	p-D2	=>	o-D3+	o-H2
+	k_arrh		0	0
+
+
+
+reaction		p-H2D+	o-D2	=>	p-H2D+	p-D2
+	k_arrh		2.07e-11	86.3
+
+reaction		p-H2D+	o-D2	=>	p-H2D+	o-D2
+	k_arrh		7.62e-11	-0.65
+
+reaction		p-H2D+	o-D2	=>	o-H2D+	p-D2
+	k_arrh		0	0
+
+reaction		p-H2D+	o-D2	=>	o-H2D+	o-D2
+	k_arrh		0	0
+
+reaction		p-H2D+	o-D2	=>	p-D2H+	HD
+	k_arrh		2.57e-10	-0.55
+
+reaction		p-H2D+	o-D2	=>	o-D2H+	HD
+	k_arrh		7.49e-10	0.60
+
+reaction		p-H2D+	o-D2	=>	p-D3+	p-H2
+	k_arrh		0	0
+
+reaction		p-H2D+	o-D2	=>	p-D3+	o-H2
+	k_arrh		0	0
+
+reaction		p-H2D+	o-D2	=>	m-D3+	p-H2
+	k_arrh		2.27e-10	-0.86
+
+reaction		p-H2D+	o-D2	=>	m-D3+	o-H2
+	k_arrh		0	0
+
+reaction		p-H2D+	o-D2	=>	o-D3+	p-H2
+	k_arrh		1.60e-10	0.11
+
+reaction		p-H2D+	o-D2	=>	o-D3+	o-H2
+	k_arrh		0	0
+
+
+
+reaction		o-H2D+	p-D2	=>	p-H2D+	p-D2
+	k_arrh		0	0
+
+reaction		o-H2D+	p-D2	=>	p-H2D+	o-D2
+	k_arrh		0	0
+
+reaction		o-H2D+	p-D2	=>	o-H2D+	p-D2
+	k_arrh		8.14e-11	1.48
+
+reaction		o-H2D+	p-D2	=>	o-H2D+	o-D2
+	k_arrh		3.93e-11	0.21
+
+reaction		o-H2D+	p-D2	=>	p-D2H+	HD
+	k_arrh		6.64e-10	0.20
+
+reaction		o-H2D+	p-D2	=>	o-D2H+	HD
+	k_arrh		5.39e-10	-0.44
+
+reaction		o-H2D+	p-D2	=>	p-D3+	p-H2
+	k_arrh		0	0
+
+reaction		o-H2D+	p-D2	=>	p-D3+	o-H2
+	k_arrh		1.48e-11	-0.62
+
+reaction		o-H2D+	p-D2	=>	m-D3+	p-H2
+	k_arrh		0	0
+
+reaction		o-H2D+	p-D2	=>	m-D3+	o-H2
+	k_arrh		0	0
+
+reaction		o-H2D+	p-D2	=>	o-D3+	p-H2
+	k_arrh		0	0
+
+reaction		o-H2D+	p-D2	=>	o-D3+	o-H2
+	k_arrh		1.31e-10	0.18
+
+
+
+reaction		o-H2D+	o-D2	=>	p-H2D+	p-D2
+	k_arrh		0	0
+
+reaction		o-H2D+	o-D2	=>	p-H2D+	o-D2
+	k_arrh		0	0
+
+reaction		o-H2D+	o-D2	=>	o-H2D+	p-D2
+	k_arrh		3.95e-11	88.5
+
+reaction		o-H2D+	o-D2	=>	o-H2D+	o-D2
+	k_arrh		8.52e-11	1.73
+
+reaction		o-H2D+	o-D2	=>	p-D2H+	HD
+	k_arrh		2.74e-10	-0.36
+
+reaction		o-H2D+	o-D2	=>	o-D2H+	HD
+	k_arrh		8.75e-10	0.53
+
+reaction		o-H2D+	o-D2	=>	p-D3+	p-H2
+	k_arrh		0	0
+
+reaction		o-H2D+	o-D2	=>	p-D3+	o-H2
+	k_arrh		0	0
+
+reaction		o-H2D+	o-D2	=>	m-D3+	p-H2
+	k_arrh		0	0
+
+reaction		o-H2D+	o-D2	=>	m-D3+	o-H2
+	k_arrh		1.63e-10	-1.57
+
+reaction		o-H2D+	o-D2	=>	o-D3+	p-H2
+	k_arrh		0	0
+
+reaction		o-H2D+	o-D2	=>	o-D3+	o-H2
+	k_arrh		8.01e-11	-0.94
+
+
+
+reaction		p-D2H+	HD	=>	p-H2D+	p-D2
+	k_arrh		1.54e-11	145.5
+
+reaction		p-D2H+	HD	=>	p-H2D+	o-D2
+	k_arrh		1.17e-11	57.0
+
+reaction		p-D2H+	HD	=>	o-H2D+	p-D2
+	k_arrh		9.47e-11	237.3
+
+reaction		p-D2H+	HD	=>	o-H2D+	o-D2
+	k_arrh		4.68e-11	146.2
+
+reaction		p-D2H+	HD	=>	p-D2H+	HD
+	k_arrh		6.53e-10	-0.73
+
+reaction		p-D2H+	HD	=>	o-D2H+	HD
+	k_arrh		3.36e-10	1.80
+
+reaction		p-D2H+	HD	=>	p-D3+	p-H2
+	k_arrh		1.45e-11	-0.69
+
+reaction		p-D2H+	HD	=>	p-D3+	o-H2
+	k_arrh		4.09e-11	-0.71
+
+reaction		p-D2H+	HD	=>	m-D3+	p-H2
+	k_arrh		0	0
+
+reaction		p-D2H+	HD	=>	m-D3+	o-H2
+	k_arrh		0	0
+
+reaction		p-D2H+	HD	=>	o-D3+	p-H2
+	k_arrh		1.09e-10	-0.78
+
+reaction		p-D2H+	HD	=>	o-D3+	o-H2
+	k_arrh		3.70e-10	0.52
+
+
+
+reaction		o-D2H+	HD	=>	p-H2D+	p-D2
+	k_arrh		7.83e-12	202.2
+
+reaction		o-D2H+	HD	=>	p-H2D+	o-D2
+	k_arrh		2.12e-11	107.6
+
+reaction		o-D2H+	HD	=>	o-H2D+	p-D2
+	k_arrh		3.59e-11	285.1
+
+reaction		o-D2H+	HD	=>	o-H2D+	o-D2
+	k_arrh		7.79e-11	196.7
+
+reaction		o-D2H+	HD	=>	p-D2H+	HD
+	k_arrh		2.90e-10	48.3
+
+reaction		o-D2H+	HD	=>	o-D2H+	HD
+	k_arrh		7.54e-10	0.04
+
+reaction		o-D2H+	HD	=>	p-D3+	p-H2
+	k_arrh		0	0
+reaction		o-D2H+	HD	=>	p-D3+	o-H2
+	k_arrh		0	0
+
+reaction		o-D2H+	HD	=>	m-D3+	p-H2
+	k_arrh		1.36e-10	-0.15
+
+reaction		o-D2H+	HD	=>	m-D3+	o-H2
+	k_arrh		2.07e-10	-0.10
+
+reaction		o-D2H+	HD	=>	o-D3+	p-H2
+	k_arrh		1.10e-10	-0.27
+
+reaction		o-D2H+	HD	=>	o-D3+	o-H2
+	k_arrh		2.84e-10 -0.38
+
+
+
+
+reaction		p-D3+	p-H2	=>	p-H2D+	p-D2
+	k_arrh		2.21e-10	379.2
+
+reaction		p-D3+	p-H2	=>	p-H2D+	o-D2
+	k_arrh		0	0
+
+reaction		p-D3+	p-H2	=>	o-H2D+	p-D2
+	k_arrh		0	0
+
+reaction		p-D3+	p-H2	=>	o-H2D+	o-D2
+	k_arrh		0	0
+
+reaction		p-D3+	p-H2	=>	p-D2H+	HD
+	k_arrh		1.77e-9	225.2
+
+reaction		p-D3+	p-H2	=>	o-D2H+	HD
+	k_arrh		0	0
+
+reaction		p-D3+	p-H2	=>	p-D3+	p-H2
+	k_arrh		1.69e-9	0.00
+
+reaction		p-D3+	p-H2	=>	p-D3+	o-H2
+	k_arrh		0	0
+
+reaction		p-D3+	p-H2	=>	m-D3+	p-H2
+	k_arrh		0	0
+
+reaction		p-D3+	p-H2	=>	m-D3+	o-H2
+	k_arrh		0	0
+
+reaction		p-D3+	p-H2	=>	o-D3+	p-H2
+	k_arrh		0	0
+
+reaction		p-D3+	p-H2	=>	o-D3+	o-H2
+	k_arrh		0	0
+
+
+
+reaction		p-D3+	o-H2	=>	p-H2D+	p-D2
+	k_arrh		0	0
+
+reaction		p-D3+	o-H2	=>	p-H2D+	o-D2
+	k_arrh		0	0
+
+reaction		p-D3+	o-H2	=>	o-H2D+	p-D2
+	k_arrh		3.00e-10	286.7
+
+reaction		p-D3+	o-H2	=>	o-H2D+	o-D2
+	k_arrh		0	0
+
+reaction		p-D3+	o-H2	=>	p-D2H+	HD
+	k_arrh		1.69e-9	52.3
+
+reaction		p-D3+	o-H2	=>	o-D2H+	HD
+	k_arrh		0	0
+
+reaction		p-D3+	o-H2	=>	p-D3+	p-H2
+	k_arrh		0	0
+
+reaction		p-D3+	o-H2	=>	p-D3+	o-H2
+	k_arrh		1.59e-9	-0.41
+
+reaction		p-D3+	o-H2	=>	m-D3+	p-H2
+	k_arrh		0	0
+
+reaction		p-D3+	o-H2	=>	m-D3+	o-H2
+	k_arrh		0	0
+
+reaction		p-D3+	o-H2	=>	o-D3+	p-H2
+	k_arrh		0	0
+
+reaction		p-D3+	o-H2	=>	o-D3+	o-H2
+	k_arrh		0	0
+
+
+
+
+reaction		m-D3+	p-H2	=>	p-H2D+	p-D2
+	k_arrh		0	0
+
+reaction		m-D3+	p-H2	=>	p-H2D+	o-D2
+	k_arrh		1.65e-10	344.9
+
+reaction		m-D3+	p-H2	=>	o-H2D+	p-D2
+	k_arrh		0	0
+
+reaction		m-D3+	p-H2	=>	o-H2D+	o-D2
+	k_arrh		0	0
+
+reaction		m-D3+	p-H2	=>	p-D2H+	HD
+	k_arrh		0	0
+
+reaction		m-D3+	p-H2	=>	o-D2H+	HD
+	k_arrh		9.57e-10	239.3
+
+reaction		m-D3+	p-H2	=>	p-D3+	p-H2
+	k_arrh		0	0
+
+reaction		m-D3+	p-H2	=>	p-D3+	o-H2
+	k_arrh		0	0
+
+reaction		m-D3+	p-H2	=>	m-D3+	p-H2
+	k_arrh		1.69e-9	0.00
+
+reaction		m-D3+	p-H2	=>	m-D3+	o-H2
+	k_arrh		0	0
+
+reaction		m-D3+	p-H2	=>	o-D3+	p-H2
+	k_arrh		0	0
+
+reaction		m-D3+	p-H2	=>	o-D3+	o-H2
+	k_arrh		0	0
+
+
+
+reaction		m-D3+	o-H2	=>	p-H2D+	p-D2
+	k_arrh		0	0
+
+reaction		m-D3+	o-H2	=>	p-H2D+	o-D2
+	k_arrh		0	0
+
+reaction		m-D3+	o-H2	=>	o-H2D+	p-D2
+	k_arrh		0	0
+
+reaction		m-D3+	o-H2	=>	o-H2D+	o-D2
+	k_arrh		1.90e-10	262.7
+
+reaction		m-D3+	o-H2	=>	p-D2H+	HD
+	k_arrh		0	0
+
+reaction		m-D3+	o-H2	=>	o-D2H+	HD
+	k_arrh		1.53e-9	65.6
+
+reaction		m-D3+	o-H2	=>	p-D3+	p-H2
+	k_arrh		0	0
+
+reaction		m-D3+	o-H2	=>	p-D3+	o-H2
+	k_arrh		0	0
+
+reaction		m-D3+	o-H2	=>	m-D3+	p-H2
+	k_arrh		0	0
+
+reaction		m-D3+	o-H2	=>	m-D3+	o-H2
+	k_arrh		1.68e-9	0.00
+
+reaction		m-D3+	o-H2	=>	o-D3+	p-H2
+	k_arrh		0	0
+
+reaction		m-D3+	o-H2	=>	o-D3+	o-H2
+	k_arrh		0	0
+
+
+
+reaction		o-D3+	p-H2	=>	p-H2D+	p-D2
+	k_arrh		1.07e-10	393.9
+
+reaction		o-D3+	p-H2	=>	p-H2D+	o-D2
+	k_arrh		7.85e-11	296.9
+
+reaction		o-D3+	p-H2	=>	o-H2D+	p-D2
+	k_arrh		0	0
+
+reaction		o-D3+	p-H2	=>	o-H2D+	o-D2
+	k_arrh		0	0
+
+reaction		o-D3+	p-H2	=>	p-D2H+	HD
+	k_arrh		9.43e-10	237.4
+
+reaction		o-D3+	p-H2	=>	o-D2H+	HD
+	k_arrh		6.89e-10	189.7
+
+reaction		o-D3+	p-H2	=>	p-D3+	p-H2
+	k_arrh		0	0
+
+reaction		o-D3+	p-H2	=>	p-D3+	o-H2
+	k_arrh		0	0
+
+reaction		o-D3+	p-H2	=>	m-D3+	p-H2
+	k_arrh		0	0
+
+reaction		o-D3+	p-H2	=>	m-D3+	o-H2
+	k_arrh		0	0
+
+reaction		o-D3+	p-H2	=>	o-D3+	p-H2
+	k_arrh		1.69e-9	0.00
+
+reaction		o-D3+	p-H2	=>	o-D3+	o-H2
+	k_arrh		0	0
+
+
+
+reaction		o-D3+	o-H2	=>	p-H2D+	p-D2
+	k_arrh		0	0
+
+reaction		o-D3+	o-H2	=>	p-H2D+	o-D2
+	k_arrh		0	0
+
+reaction		o-D3+	o-H2	=>	o-H2D+	p-D2
+	k_arrh		1.53e-10	303.8
+
+reaction		o-D3+	o-H2	=>	o-H2D+	o-D2
+	k_arrh		9.60e-11	213.6
+
+reaction		o-D3+	o-H2	=>	p-D2H+	HD
+	k_arrh		9.06e-10	66.2
+
+reaction		o-D3+	o-H2	=>	o-D2H+	HD
+	k_arrh		7.70e-10	17.0
+
+reaction		o-D3+	o-H2	=>	p-D3+	p-H2
+	k_arrh		0	0
+
+reaction		o-D3+	o-H2	=>	p-D3+	o-H2
+	k_arrh		0	0
+
+reaction		o-D3+	o-H2	=>	m-D3+	p-H2
+	k_arrh		0	0
+
+reaction		o-D3+	o-H2	=>	m-D3+	o-H2
+	k_arrh		0	0
+
+reaction		o-D3+	o-H2	=>	o-D3+	p-H2
+	k_arrh		0	0
+
+reaction		o-D3+	o-H2	=>	o-D3+	o-H2
+	k_arrh		1.30e-9	-1.47
+
+
+
+// H-4 D system
+reaction		p-D2H+	p-D2	=>	p-D2H+	p-D2
+	k_arrh		2.45e-10	-0.19
+
+reaction		p-D2H+	p-D2	=>	p-D2H+	o-D2
+	k_arrh		5.16e-11	0.10
+
+reaction		p-D2H+	p-D2	=>	o-D2H+	p-D2
+	k_arrh		4.36e-11	3.11
+
+reaction		p-D2H+	p-D2	=>	o-D2H+	o-D2
+	k_arrh		1.42e-10	1.31
+
+reaction		p-D2H+	p-D2	=>	p-D3+	HD
+	k_arrh		8.94e-11	-1.00
+
+reaction		p-D2H+	p-D2	=>	m-D3+	HD
+	k_arrh		0	0
+
+reaction		p-D2H+	p-D2	=>	o-D3+	HD
+	k_arrh		8.23e-10	-0.13
+
+
+
+reaction		p-D2H+	o-D2	=>	p-D2H+	p-D2
+	k_arrh		3.74e-11	85.9
+
+reaction		p-D2H+	o-D2	=>	p-D2H+	o-D2
+	k_arrh		1.62e-10	0.29
+
+reaction		p-D2H+	o-D2	=>	o-D2H+	p-D2
+	k_arrh		1.05e-10	35.6
+
+reaction		p-D2H+	o-D2	=>	o-D2H+	o-D2
+	k_arrh		9.12e-11	3.65
+
+reaction		p-D2H+	o-D2	=>	p-D3+	HD
+	k_arrh		7.44e-11	0.11
+
+reaction		p-D2H+	o-D2	=>	m-D3+	HD
+	k_arrh		2.93e-10	0.16
+
+reaction		p-D2H+	o-D2	=>	o-D3+	HD
+	k_arrh		7.59e-10	-0.52
+
+
+
+reaction		o-D2H+	p-D2	=>	p-D2H+	p-D2
+	k_arrh		3.64e-11	50.0
+
+reaction		o-D2H+	p-D2	=>	p-D2H+	o-D2
+	k_arrh		1.92e-10	-0.70
+
+reaction		o-D2H+	p-D2	=>	o-D2H+	p-D2
+	k_arrh		9.40e-11	-0.33
+
+reaction		o-D2H+	p-D2	=>	o-D2H+	o-D2
+	k_arrh		1.11e-10	-0.50
+
+reaction		o-D2H+	p-D2	=>	p-D3+	HD
+	k_arrh		6.87e-11	-0.85
+
+reaction		o-D2H+	p-D2	=>	m-D3+	HD
+	k_arrh		2.77e-10	-0.76
+
+reaction		o-D2H+	p-D2	=>	o-D3+	HD
+	k_arrh		6.52e-10	0.90
+
+
+
+reaction		o-D2H+	o-D2	=>	p-D2H+	p-D2
+	k_arrh		5.75e-11	137.7
+
+reaction		o-D2H+	o-D2	=>	p-D2H+	o-D2
+	k_arrh		7.31e-11	50.3
+
+reaction		o-D2H+	o-D2	=>	o-D2H+	p-D2
+	k_arrh		4.28e-11	85.5
+
+reaction		o-D2H+	o-D2	=>	o-D2H+	o-D2
+	k_arrh		2.24e-10	-0.85
+
+reaction		o-D2H+	o-D2	=>	p-D3+	HD
+	k_arrh		0	0
+
+reaction		o-D2H+	o-D2	=>	m-D3+	HD
+	k_arrh		5.82e-10	-0.08
+
+reaction		o-D2H+	o-D2	=>	o-D3+	HD
+	k_arrh		5.81e-10	0.40
+
+
+
+reaction		p-D3+	HD	=>	p-D2H+	p-D2
+	k_arrh		2.77e-10	229.7
+
+reaction		p-D3+	HD	=>	p-D2H+	o-D2
+	k_arrh		2.24e-10	144.8
+
+reaction		p-D3+	HD	=>	o-D2H+	p-D2
+	k_arrh		1.50e-10	182.0
+
+reaction		p-D3+	HD	=>	o-D2H+	o-D2
+	k_arrh		0	0
+
+reaction		p-D3+	HD	=>	p-D3+	HD
+	k_arrh		6.91e-10	0.00
+
+reaction		p-D3+	HD	=>	m-D3+	HD
+	k_arrh		0	0
+
+reaction		p-D3+	HD	=>	o-D3+	HD
+	k_arrh		7.75e-10	0.00
+
+
+
+reaction		m-D3+	HD	=>	p-D2H+	p-D2
+	k_arrh		0	0
+
+reaction		m-D3+	HD	=>	p-D2H+	o-D2
+	k_arrh		1.08e-10	206.7
+
+reaction		m-D3+	HD	=>	o-D2H+	p-D2
+	k_arrh		8.74e-11	251.3
+
+reaction		m-D3+	HD	=>	o-D2H+	o-D2
+	k_arrh		2.65e-10	154.3
+
+reaction		m-D3+	HD	=>	p-D3+	HD
+	k_arrh		0	0
+
+reaction		m-D3+	HD	=>	m-D3+	HD
+	k_arrh		1.41e-9	-0.25
+
+reaction		m-D3+	HD	=>	o-D3+	HD
+	k_arrh		5.97e-10	46.3
+
+
+
+reaction		o-D3+	HD	=>	p-D2H+	p-D2
+	k_arrh		1.40e-10	247.4
+
+reaction		o-D3+	HD	=>	p-D2H+	o-D2
+	k_arrh		1.63e-10	160.5
+
+reaction		o-D3+	HD	=>	o-D2H+	p-D2
+	k_arrh		1.08e-10	198.4
+
+reaction		o-D3+	HD	=>	o-D2H+	o-D2
+	k_arrh		1.20e-10	105.2
+
+reaction		o-D3+	HD	=>	p-D3+	HD
+	k_arrh		9.16e-11	15.5
+
+reaction		o-D3+	HD	=>	m-D3+	HD
+	k_arrh		2.46e-10	-0.23
+
+reaction		o-D3+	HD	=>	o-D3+	HD
+	k_arrh		1.17e-9	-0.18
+
+
+
+// D system
+reaction		p-D3+	p-D2	=>	p-D3+	p-D2
+	k_arrh		4.03e-10	-0.24
+
+reaction		p-D3+	p-D2	=>	p-D3+	o-D2
+	k_arrh		0	0
+
+reaction		p-D3+	p-D2	=>	m-D3+	p-D2
+	k_arrh		0	0
+
+reaction		p-D3+	p-D2	=>	m-D3+	o-D2
+	k_arrh		0	0
+
+reaction		p-D3+	p-D2	=>	o-D3+	p-D2
+	k_arrh		4.61e-10	-0.29
+
+reaction		p-D3+	p-D2	=>	o-D3+	o-D2
+	k_arrh		4.75e-10	0.54
+
+
+
+reaction		p-D3+	o-D2	=>	p-D3+	p-D2
+	k_arrh		0	0
+
+reaction		p-D3+	o-D2	=>	p-D3+	o-D2
+	k_arrh		5.56e-10	-0.77
+
+reaction		p-D3+	o-D2	=>	m-D3+	p-D2
+	k_arrh		4.00e-10	21.7
+
+reaction		p-D3+	o-D2	=>	m-D3+	o-D2
+	k_arrh		0	0
+
+reaction		p-D3+	o-D2	=>	o-D3+	p-D2
+	k_arrh		5.34e-10	68.9
+
+reaction		p-D3+	o-D2	=>	o-D3+	o-D2
+	k_arrh		6.18e-10	-0.77
+
+
+
+reaction		m-D3+	p-D2	=>	p-D3+	p-D2
+	k_arrh		0	0
+
+reaction		m-D3+	p-D2	=>	p-D3+	o-D2
+	k_arrh		8.37e-11	-0.61
+
+reaction		m-D3+	p-D2	=>	m-D3+	p-D2
+	k_arrh		4.87e-10	-0.37
+
+reaction		m-D3+	p-D2	=>	m-D3+	o-D2
+	k_arrh		1.48e-10	-0.49
+
+reaction		m-D3+	p-D2	=>	o-D3+	p-D2
+	k_arrh		1.11e-10	46.6
+
+reaction		m-D3+	p-D2	=>	o-D3+	o-D2
+	k_arrh		6.12e-10	0.45
+
+
+
+reaction		m-D3+	o-D2	=>	p-D3+	p-D2
+	k_arrh		0	0
+
+reaction		m-D3+	o-D2	=>	p-D3+	o-D2
+	k_arrh		0	0
+
+reaction		m-D3+	o-D2	=>	m-D3+	p-D2
+	k_arrh		2.14e-10	84.7
+
+reaction		m-D3+	o-D2	=>	m-D3+	o-D2
+	k_arrh		1.27e-9	-0.32
+
+reaction		m-D3+	o-D2	=>	o-D3+	p-D2
+	k_arrh		1.63e-10	130.5
+
+reaction		m-D3+	o-D2	=>	o-D3+	o-D2
+	k_arrh		6.66e-10	45.8
+
+
+
+reaction		o-D3+	p-D2	=>	p-D3+	p-D2
+	k_arrh		5.37e-11	15.2
+
+reaction		o-D3+	p-D2	=>	p-D3+	o-D2
+	k_arrh		4.49e-11	-0.23
+
+reaction		o-D3+	p-D2	=>	m-D3+	p-D2
+	k_arrh		4.47e-11	-0.26
+
+reaction		o-D3+	p-D2	=>	m-D3+	o-D2
+	k_arrh		5.64e-11	0.72
+
+reaction		o-D3+	p-D2	=>	o-D3+	p-D2
+	k_arrh		5.76e-10	-0.10
+
+reaction		o-D3+	p-D2	=>	o-D3+	o-D2
+	k_arrh		5.87e-10	-0.19
+
+
+
+reaction		o-D3+	o-D2	=>	p-D3+	p-D2
+	k_arrh		2.51e-11	99.5
+
+reaction		o-D3+	o-D2	=>	p-D3+	o-D2
+	k_arrh		7.74e-11	15.3
+
+reaction		o-D3+	o-D2	=>	m-D3+	p-D2
+	k_arrh		3.21e-10	38.3
+
+reaction		o-D3+	o-D2	=>	m-D3+	o-D2
+	k_arrh		2.78e-10	-0.47
+
+reaction		o-D3+	o-D2	=>	o-D3+	p-D2
+	k_arrh		3.24e-10	85.2
+
+reaction		o-D3+	o-D2	=>	o-D3+	o-D2
+	k_arrh		9.70e-10	-0.39

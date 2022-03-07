@@ -1,0 +1,15 @@
+# name	# concentration	# mass		# atomic_radii
+o-H2	0.75e11		2.		0
+p-H2	0.25e11		2.		0
+HD	1e9		3.		0
+o-D2	0		4.		0
+p-D2	0		4.		0
+o-H3+	1e3		3.		0
+p-H3+	0		3.		0
+o-H2D+	0		4.		0
+p-H2D+	0		4.		0
+o-D2H+	0		5.		0
+p-D2H+	0		5.		0
+o-D3+	0		6.		0
+m-D3+	0		6.		0
+p-D3+	0		6.		0
