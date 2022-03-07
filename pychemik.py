@@ -178,7 +178,7 @@ def calculate_E_loss(Tn, Te, f, concentration, k_c, pomoc, speci, Eloss, Elastic
     return E_loss
 
 
-def create_ODE(t, concentration, rlist, k_c, Z, REACT, pomoc, speci, Eloss, Elastic, R_special, state):
+def create_ODE(t, concentration, rlist, k_c, Z, REACT, pomoc, speci, Eloss, Elastic, R_special, state, epsilon=1e-12):
     # sestaveni rovnice pro resic lsoda; nevyzaduje vypocet jakobianu 
 
     global Te_last_coeffs
@@ -192,7 +192,7 @@ def create_ODE(t, concentration, rlist, k_c, Z, REACT, pomoc, speci, Eloss, Elas
             k_c = calculate_k(rlist, RC.State(state.Tg, TeK, None))
             Te_last_coeffs = TeeV
 
-    concentration[concentration < 1e-12] = 0
+    concentration[concentration < epsilon] = 0.
 
     # calculate effective rate coefficients (dependent on concentrations)
     for r in R_special["diffusion_ar"]:
