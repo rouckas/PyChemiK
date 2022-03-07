@@ -31,7 +31,7 @@ reaction_list = load_reaction_data(file_reaction_data)
 species_list, _ = load_species(file_species)
 
 
-concentrations, cas, vyvoj, speci, Te = solve_ODE(time, time_step, species_list, reaction_list, state, method="solve_ivp")
+concentrations, cas, vyvoj, speci, _ = solve_ODE(time, time_step, species_list, reaction_list, state, method="solve_ivp")
 
 for i in range(len(speci)):
     print(speci[i].name, ": \t %e" % speci[i].conc)
@@ -39,6 +39,8 @@ for i in range(len(speci)):
 print(Te)
 time_step = 1e-6
 time = 1e-5
+state = State(Tn, Te, None)
+state.diffusion_length = diffusion_length
 state.electron_cooling = True
 
 species_list, _ = load_species(file_species)

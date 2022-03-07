@@ -185,12 +185,11 @@ def create_ODE(t, concentration, rlist, k_c, Z, REACT, pomoc, speci, Eloss, Elas
 
     if state.electron_cooling:
         # recalculate coefficients if needed
-        TeK =concentration[-1] * Q0 / k_b
-        TeeV = concentration[-1]
+        Te =concentration[-1] * Q0 / k_b
 
-        if (TeeV != Te_last_coeffs):
-            k_c = calculate_k(rlist, RC.State(state.Tg, TeK, None))
-            Te_last_coeffs = TeeV
+        if (Te != state.Te):
+            state.Te = Te
+            k_c = calculate_k(rlist, state)
 
     concentration[concentration < epsilon] = 0.
 
@@ -201,8 +200,8 @@ def create_ODE(t, concentration, rlist, k_c, Z, REACT, pomoc, speci, Eloss, Elas
         # calculate the loss rate due to ambipolar diffusion
         # This is not correct if the diffusion coefficients of different ions and significantly different
         # It is rough approximation, calculation of spatial distribution would be needed for accuracy.
-        k_c[r[0]] = ambi_dif(rate_langevin(r[1]) , concentration[pomoc["He"]], r[1], state.diffusion_length, state.Tg, concentration[-1] * Q0 / k_b)
-    rate_st = Stevefelt_formula(concentration[pomoc["e-"]], concentration[-1] * Q0 / k_b)
+        k_c[r[0]] = ambi_dif(rate_langevin(r[1]) , concentration[pomoc["He"]], r[1], state.diffusion_length, state.Tg, state.Te)
+    rate_st = Stevefelt_formula(concentration[pomoc["e-"]], state.Te)
     for r in R_special["Stevefelt"]:
         k_c[r[0]] = rate_st
 
@@ -210,17 +209,16 @@ def create_ODE(t, concentration, rlist, k_c, Z, REACT, pomoc, speci, Eloss, Elas
     # calculate the vector of reaction rates
     from numpy import errstate
     with errstate(divide="ignore"):
-        f = N.exp(REACT * N.log(concentration[:-1])) * k_c
+        rates = N.exp(REACT * N.log(concentration[:len(speci)])) * k_c
+
+
+    rhs = Z * rates
 
     if state.electron_cooling:
-        E_loss = calculate_E_loss(state.Tg, TeK, f, concentration, k_c, pomoc, speci, Eloss, Elastic)
-    else:
-        E_loss = 0
+        E_loss = calculate_E_loss(state.Tg, state.Te, rates, concentration, k_c, pomoc, speci, Eloss, Elastic)
+        rhs = N.hstack((rhs, E_loss))
 
-    f = Z * f 
-    f = N.hstack((f, E_loss))
-
-    return f
+    return rhs
    
 
 def solve_ODE(t1, dt, species_list, reaction_list, state, method="ode"):
@@ -232,16 +230,15 @@ def solve_ODE(t1, dt, species_list, reaction_list, state, method="ode"):
     k_c = calculate_k(reaction_list, state)
 
     t0 = 0
-    y0 = N.array([s.conc for s in species_list] + [state.Te * k_b / Q0])
-
-    global Te_last_coeffs
-    Te_last_coeffs = y0[-1]
+    y0 = N.array([s.conc for s in species_list])
+    if state.electron_cooling:
+        y0 = N.append(y0, state.Te * k_b / Q0)
 
     if method == "ode":
         from scipy.integrate import ode
         vyvoj = [y0]
         cas = [0]
-        global conc_srov
+        conc_srov = 0
         #r = ode(create_ODE).set_integrator('lsoda', atol=1e-3)
         r = ode(create_ODE).set_integrator('vode', method='bdf', atol=1e-2)
 
@@ -304,13 +301,10 @@ def solve_ODE(t1, dt, species_list, reaction_list, state, method="ode"):
 
     for i in range(len(species_list)):
         species_list[i].conc = y[-1, i]
-    Te =y[-1, -1] * Q0 / k_b
+
+    if state.electron_cooling:
+        Te =y[-1, -1] * Q0 / k_b
+    else:
+        Te = None
 
     return r, t, y, species_list, Te
-
-##############################
-##### global variables #######
-##############################
-Te_last_coeffs = 1.73
-conc_srov = 0
-
