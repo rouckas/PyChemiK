@@ -222,8 +222,8 @@ def create_ODE(t, concentration, rlist, k_c, Z, REACT, pomoc, speci, Eloss, Elas
 
     return f
    
-    
-def solve_ODE(t1, dt, species_list, reaction_list, state):
+
+def solve_ODE(t1, dt, species_list, reaction_list, state, method="ode"):
 
     species_dict = {s.name:i for i, s in enumerate(species_list)}
 
@@ -234,43 +234,79 @@ def solve_ODE(t1, dt, species_list, reaction_list, state):
     t0 = 0
     y0 = N.array([s.conc for s in species_list] + [state.Te * k_b / Q0])
 
-    vyvoj = [y0]
-    cas = [0]   
-    global conc_srov
     global Te_last_coeffs
     Te_last_coeffs = y0[-1]
-    #r = ode(create_ODE).set_integrator('lsoda', atol=1e-3)
-    r = ode(create_ODE).set_integrator('vode', method='bdf', atol=1e-2)
-    stopni = 0
 
-    create_ODE(1.27e-22, y0, reaction_list, k_c, Z, REACT, species_dict, species_list, Eloss, Elastic, R_special, state)
-    r.set_initial_value(y0, t0).set_f_params(reaction_list, k_c, Z, REACT, species_dict, species_list, Eloss, Elastic, R_special, state)
-    while r.successful() and r.t < t1:
-        try:
-            r.integrate(r.t+dt)
-            cas.append(r.t)
-            vyvoj.append(r.y)
-            for i in range(len(r.y)-1):        
-                if (r.y[i] <= 1e-10): r.y[i] = 0
-            
-            if (r.t > 1e-4):
-                if N.all(N.abs((conc_srov / r.y - 1)) < 1e-5):
-                    print("zastaveno v case ", r.t)
-                    break
-            conc_srov = r.y
-        except: 
-            print("stop")
-            break
+    if method == "ode":
+        from scipy.integrate import ode
+        vyvoj = [y0]
+        cas = [0]
+        global conc_srov
+        #r = ode(create_ODE).set_integrator('lsoda', atol=1e-3)
+        r = ode(create_ODE).set_integrator('vode', method='bdf', atol=1e-2)
+
+        # test run to detect errors, because the lsoda/vode methods ignore exceptions
+        create_ODE(1.27e-22, y0, reaction_list, k_c, Z, REACT, species_dict, species_list, Eloss, Elastic, R_special, state)
+        r.set_initial_value(y0, t0).set_f_params(reaction_list, k_c, Z, REACT, species_dict, species_list, Eloss, Elastic, R_special, state)
+        while r.successful() and r.t < t1:
+            try:
+                r.integrate(r.t+dt)
+                cas.append(r.t)
+                vyvoj.append(r.y)
+                for i in range(len(r.y)-1):
+                    if (r.y[i] <= 1e-10): r.y[i] = 0
+
+                if (r.t > 1e-4):
+                    if N.all(N.abs((conc_srov / r.y - 1)) < 1e-5):
+                        print("zastaveno v case ", r.t)
+                        break
+                conc_srov = r.y
+            except:
+                print("stop")
+                break
+
+        if not r.successful():
+            raise(RuntimeError(("Integration failed. Stopping at t=%f"%r.t)))
         
-    vyvoj = N.array(vyvoj)
-    cas = N.array(cas)
+        y = N.array(vyvoj)
+        t = N.array(cas)
+
+    elif method == "solve_ivp":
+        from scipy.integrate import solve_ivp
+        r = solve_ivp(
+                create_ODE, (t0, t1), y0, method="LSODA", t_eval=t0 + dt*N.arange(0, (t1-t0)//dt),
+                args=(reaction_list, k_c, Z, REACT, species_dict, species_list, Eloss, Elastic, R_special, state),
+                atol=1e-5
+                )
+        y = r.y.T
+        t = r.t
+
+    elif method == "solve_ivp_log":
+        """attempt at solving for log(y) instead of y. Does not seem to improve stability"""
+        eps=1e-10
+        y0_log = N.log(y0 + eps)
+
+        def RHS_log(t, y_log, *args):
+            y = N.exp(y_log)
+            dlogydt = create_ODE(t, y, *args)/y
+            return dlogydt
+
+        from scipy.integrate import solve_ivp
+        r = solve_ivp(
+                RHS_log, (t0, t1), y0_log, method="LSODA", t_eval=t0 + dt*N.arange(0, (t1-t0)//dt),
+                args=(reaction_list, k_c, Z, REACT, species_dict, species_list, Eloss, Elastic, R_special, state),
+                atol=1e-3
+                )
+
+        r.y = N.exp(r.y)
+    else:
+        raise ValueError("Unknown integration method " + str(method))
 
     for i in range(len(species_list)):
-        species_list[i].conc = r.y[i]
-    print(r.y[-1] * Q0 / k_b, r.y[-1])
-    Te =r.y[-1] * Q0 / k_b
+        species_list[i].conc = y[-1, i]
+    Te =y[-1, -1] * Q0 / k_b
 
-    return r, cas, vyvoj, species_list, Te
+    return r, t, y, species_list, Te
 
 ##############################
 ##### global variables #######

@@ -16,8 +16,8 @@ file_reaction_data = "data/collisions/electron.txt"   # reactions + temperature 
 Tn = 77
 Te = 20000
 
-time = 20e-3
-time_step = time/10e2
+time = 2e-3
+time_step = time/1e2
 
 
 r = 7.5e-3
@@ -31,7 +31,7 @@ reaction_list = load_reaction_data(file_reaction_data)
 species_list, _ = load_species(file_species)
 
 
-concentrations, cas, vyvoj, speci, Te = solve_ODE(time, time_step, species_list, reaction_list, state)
+concentrations, cas, vyvoj, speci, Te = solve_ODE(time, time_step, species_list, reaction_list, state, method="solve_ivp")
 
 for i in range(len(speci)):
     print(speci[i].name, ": \t %e" % speci[i].conc)
@@ -43,7 +43,7 @@ state.electron_cooling = True
 
 species_list, _ = load_species(file_species)
 
-concentrations, cas, vyvoj, speci, Te = solve_ODE(time, time_step, species_list, reaction_list, state)
+concentrations, cas, vyvoj, speci, Te = solve_ODE(time, time_step, species_list, reaction_list, state, method="ode")
 
 for i in range(len(speci)):
     print(speci[i].name, ": \t %e" % speci[i].conc)
