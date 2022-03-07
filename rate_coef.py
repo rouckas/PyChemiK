@@ -103,6 +103,10 @@ class State:
         else:
             self.EEDF = EEDF
 
+    def __repr__(self):
+        res = "State(" + str(self.Tg) + ", " + str(self.Te) + ", " + str(self.EEDF) + ")"
+        return res
+
 class Reaction:
     def __init__(self, reactants, products, 
             reaction_type=None, k=None, k_hydhel=None, k_arrh=None, CS=None,
